@@ -11,6 +11,7 @@ objective in the presence of outliers.
 ## Python and Numpy Versions:
 	Python 3.6.5
 	Numpy 1.14.3
+	Scipy 1.2.1
 
 ---
 ## Push log
