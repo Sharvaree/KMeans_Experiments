@@ -1,6 +1,9 @@
 #Code for Kmeans++
 #default num of clusters is 3
 
+import numpy as np
+from scipy.spatial import distance
+
 class KMeanPlusPlus:
     def __init__(self, num_clusters=3, init=None):
         self.num_clusters = num_clusters
@@ -10,7 +13,7 @@ class KMeanPlusPlus:
         for i in range(1, self.num_clusters):
             # find the distance to the closest center for each of the points
             corresponding_centers = self.predict(X)
-            distance_matrix = cdist(X, self.centers)
+            distance_matrix = distance.cdist(X, self.centers)
             distances = distance_matrix[np.arange(len(X)), corresponding_centers]
             dist_prob = distances / sum(distances)
             
@@ -25,7 +28,7 @@ class KMeanPlusPlus:
     
     def predict(self, X):
         # compute distance matrix 
-        distances = cdist(X, self.centers)
+        distances = distance.cdist(X, self.centers)
         
         # find the closest center
         closest_centers = np.argmin(distances, axis=1)
