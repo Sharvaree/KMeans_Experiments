@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[47]:
-
-
-import numpy as np # linear algebra
+import numpy as np 
 from scipy.spatial import distance
 import math
 import csv
@@ -28,6 +22,12 @@ def Gonzalez(data, num_clusters, init):
         centers.append(max_dist(data, centers)) 
     return np.array(centers)
 
-#Gonzalez_centers = gonzalez(data, num_clusters, init)
-#print('Cluster Centeroids:', Gonzalez_centers)
 
+#dummy data_set
+from sklearn import cluster, datasets, mixture
+n_samples=100
+noisy_circles = datasets.make_circles(n_samples=n_samples, factor=.5,
+                                      noise=.05)
+data= noisy_circles[0]
+Gonzalez_centers = Gonzalez(data, num_clusters=3, init=data[0])
+print('Cluster Centers:', Gonzalez_centers)
