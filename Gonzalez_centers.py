@@ -30,4 +30,4 @@ noisy_circles = datasets.make_circles(n_samples=n_samples, factor=.5,
                                       noise=.05)
 data= noisy_circles[0]
 Gonzalez_centers = Gonzalez(data, num_clusters=3, init=data[0])
-print('Cluster Centers:', Gonzalez_centers)
+#print('Cluster Centers:', Gonzalez_centers)
