@@ -21,3 +21,9 @@ objective in the presence of outliers.
 	the readme. Real datasets ignored.
 	Pretty raw, but no known bugs. 
 
+2019-04-30: HeavenlyBerserker: Massive
+	improvements upon algo1, using numpy
+	and scipy libraries to accelerate
+	work. Preprocessing step pushed.
+	Todo: Generator improvements.
+
