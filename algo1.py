@@ -21,7 +21,7 @@ def phi(P, C):
 
     return sum(distances)
 
-def ourAlg():
+def algo1():
     print("Preparing...")
     print("Reading and parsing data...")
 
@@ -137,4 +137,4 @@ def ourAlg():
 
     print(costs)
 
-ourAlg()
+algo1()
