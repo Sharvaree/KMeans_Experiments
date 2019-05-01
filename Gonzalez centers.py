@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[47]:
-
-
-import numpy as np # linear algebra
+import numpy as np 
 from scipy.spatial import distance
 import math
 import csv
