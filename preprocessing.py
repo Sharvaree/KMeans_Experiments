@@ -4,8 +4,37 @@ Put SUSY.csv, Skin_NonSkin.txt, shuttle.trn, and covtype.data in realData and ru
 
 import numpy as np
 import os
+'''
+from sh import gunzip
+import wget
+'''
+
 
 def preprocess():
+    '''
+    destination = 'realData'
+    exists = os.path.isfile('realData/SUSY.csv')
+    if(not exists):
+        url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00279/SUSY.csv.gz'
+        wget.download(url, destination + '/susy.csv.gz')
+        gunzip('realData/SUSY.csv.gz')
+
+    exists = os.path.isfile('realData/covtype.data')
+    if(not exists):
+        url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/covtype/covtype.data.gz'
+        wget.download(url, destination + '/covtype.data')
+        gunzip('realData/covtype.data.gz')
+
+    exists = os.path.isfile('realData/shuttle.trn')
+    if(not exists):
+        url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/shuttle/shuttle.trn.Z'
+        wget.download(url, destination + '/shuttle.trn')
+
+    exists = os.path.isfile('realData/Skin_NonSkin.txt')
+    if(not exists):
+        url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00229/Skin_NonSkin.txt'
+        wget.download(url, destination + '/Skin_NonSkin.txt')
+    '''
     dirNam = "realData/"
     proDir = "realDataProcessed/"
 
