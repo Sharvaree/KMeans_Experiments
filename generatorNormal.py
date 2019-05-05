@@ -5,13 +5,17 @@ import random
 #Parameters
 #n: if integer, then n is numeber of points, and each cluster will have n/k. 
 #	if list, n is a list of size k with number of points in each cluster.
+#		example: n = [1000] * k will yield k clusters of 1000 points each
+#				 n = 5000 will yield k clusters of 5000/k points each
 #d: number of dimensions
 #k: number of clusters
-#rang: range of points, each dimension will range from -rang to rang
+#rang: range of points, each dimension will range from -rang to rang (centered at origin)
 #sds: if number, sds is a numeer with the standard deviation of the distribution
 #	  if list, sds is a list of size d with the standard deviations on each dimension
+#		example: sds = [1] * d will define all standard deviations to be 1
+#		example: sds = 1 will have the same effect
 #z: number of outliers
-def generatorNorm(n,d,k,rang,sds,z):
+def generatorNorm(n,d,k,rang,sds,z,num):
     #Constants
     if(isinstance(sds,int) or isinstance(sds,float)):
         sds = [sds]*d
@@ -56,7 +60,7 @@ def generatorNorm(n,d,k,rang,sds,z):
     
     print(len(pointset))
 
-    fn = "syntheticData/n" + str(n) + "d" + str(d) + "k" + str(k) + "rang" + str(int(rang)) + "z" + str(z) + ".csv"
+    fn = "syntheticData/n" + str(n) + "d" + str(d) + "k" + str(k) + "rang" + str(int(rang)) + "z" + str(z) +"c"+ str(num) + ".csv"
 
     infile = open(fn , 'w')
     for i in range(len(pointset)):
