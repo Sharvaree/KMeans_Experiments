@@ -2,17 +2,25 @@ import numpy as np
 import math
 import random
 
-def main():
-
+#Parameters
+#n: if integer, then n is numeber of points, and each cluster will have n/k. 
+#	if list, n is a list of size k with number of points in each cluster.
+#d: number of dimensions
+#k: number of clusters
+#rang: range of points, each dimension will range from -rang to rang
+#sds: if number, sds is a numeer with the standard deviation of the distribution
+#	  if list, sds is a list of size d with the standard deviations on each dimension
+#z: number of outliers
+def generatorNorm(n,d,k,rang,sds,z):
     #Constants
-    d = 15
-    k = 5
-    s = [1000] * k
-    rang = 50.0
-    #csd = 10000.0
-    sds = [[1] * d] * k
-    z = 1000
-    zrang = 100.0
+    if(isinstance(sds,int) or isinstance(sds,float)):
+        sds = [sds]*d
+    if(isinstance(n,list)):    
+        s = n
+        n = sum(n)
+    else:
+        s = [int(n/k)]*k
+    zrang = rang
     
     #Generate centers
     centers = []
@@ -43,12 +51,14 @@ def main():
         for j in range(s[i]):
             point = []
             for l in range(d):
-                point.append(np.random.normal(centers[i][l],sds[i][l]))
+                point.append(np.random.normal(centers[i][l],sds[l]))
             pointset.append(point)
     
     print(len(pointset))
 
-    infile = open("syntheticData/data.txt", 'w')
+    fn = "syntheticData/n" + str(n) + "d" + str(d) + "k" + str(k) + "rang" + str(int(rang)) + "z" + str(z) + ".csv"
+
+    infile = open(fn , 'w')
     for i in range(len(pointset)):
         for j in range(len(pointset[0])):
             if(j == d - 1):
@@ -56,4 +66,4 @@ def main():
             else:
                 infile.write(str(pointset[i][j]) + ",")
         infile.write("\n")
-main()
+    return fn

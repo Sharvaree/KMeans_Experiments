@@ -3,16 +3,16 @@ from scipy.spatial import distance
 import math
 import random
 
-class kcentersOutliers:
+class kcentersOut:
     def get_csv(self,fileName):
         return np.genfromtxt(fileName, delimiter=',')
 
-    def __init__(self,fileName, it, r2):
+    def __init__(self,data, it, r2):
         self.it = it
-        self.data = np.array(self.get_csv(fileName))
+        self.data = data
         self.r2 = r2
         
-    def kcentersOutliers(self):
+    def kcentersOut(self):
         size = len(self.data)
 
         #Random initialization
@@ -32,7 +32,7 @@ class kcentersOutliers:
             #Computinf distribution
             distribution = np.where(dist > self.r2, 1, [0]*size)
             tempSum = sum(distribution)
-            distribution = distribution/tempSum
+            distribution = distribution/float(tempSum)
             #Picking center
             winnerInd = np.random.choice(size,1, p = distribution)
             #Adding center
@@ -42,6 +42,6 @@ class kcentersOutliers:
 
 
 
-kcent = kcentersOutliers("syntheticData/data.txt",10,10.0)
-kcent.kcentersOutliers()
+#kcent = kcentersOutliers("syntheticData/data.txt",10,10.0)
+#kcent.kcentersOutliers()
 
