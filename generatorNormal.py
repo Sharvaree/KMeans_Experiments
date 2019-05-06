@@ -60,7 +60,7 @@ def generatorNorm(n,d,k,rang,sds,z,num):
     
     print(len(pointset))
 
-    fn = "syntheticData/n" + str(n) + "d" + str(d) + "k" + str(k) + "rang" + str(int(rang)) + "z" + str(z) +"c"+ str(num) + ".csv"
+    fn = "syntheticData/n" + str(len(pointset)) + "d" + str(d) + "k" + str(k) + "rang" + str(int(rang)) + "z" + str(z) +"c"+ str(num) + "s" + str(sds[0]) + ".csv"
 
     infile = open(fn , 'w')
     for i in range(len(pointset)):
