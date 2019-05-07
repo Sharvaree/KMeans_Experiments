@@ -18,20 +18,20 @@ extraInfo = ["example1", "example2", "example3"] # add header names to this list
 #Class that contains info and 
 #data of a single synthetic file
 class synthD:
-	filename = ""
-	n = 0   #number of points
-	d = 0   #dimensions
-	k = 0   #number of clusters
-	rang = 0.0   
-	z = 0   # number of outliers
-	c = 0
-	s = 0
-	data = 0   #data points
-	centers = []
-	costs = []
+    filename = ""
+    n = 0   #number of points
+    d = 0   #dimensions
+    k = 0   #number of clusters
+    rang = 0.0   
+    z = 0   # number of outliers
+    c = 0
+    s = 0
+    data = 0   #data points
+    centers = []
+    costs = []
     phi_star= 0   #thresholded cost
-	extrastats = [] #Please make sure len(extrastats) == len(extraInfo) if possible
-	
+    extrastats = [] #Please make sure len(extrastats) == len(extraInfo) if possible
+
 #Reads csv file to numpy array.
 def get_csv(fileName):
         return np.genfromtxt(fileName, delimiter=',')
@@ -143,30 +143,30 @@ def addAnswer(stats, sd):
 
 #Compute k centers w/ outliers
 def computeKCoutliers(synthD):
-	num = 0
-	stats = []
-	for f in synthD:
-		#reads data and parses first file in folder
-		sd = readSynthetic(f)
-		print("Iteration:",num)
-		num+=1
+    num = 0
+    stats = []
+    for f in synthD:
+        #reads data and parses first file in folder
+        sd = readSynthetic(f)
+        print("Iteration:",num)
+        num+=1
 
-		for i in range(5):
-			#Running kMeansOut on the data
+        for i in range(5):
+            #Running kMeansOut on the data
             kcent, cid, dist = kmo.kmeansOutliers(sd.data,sd.phi_star,sd.z, sd.k)
-			ans = kcent.kcentersOut()
+            ans = kcent
 
-			#Computing cost
-			sd.costs.append(kc.kCCost(sd.data, ans, sd.s))
+            #Computing cost
+            sd.costs.append(kmo.cost())
 
-		#example for adding extra stats, i.e. time. For headers, go to top
-		sd.extrastats = [0,num, num*num]
+        #example for adding extra stats, i.e. time. For headers, go to top
+        sd.extrastats = [0,num, num*num]
 
-		printSD(sd)
-			
-		stats = addAnswer(stats, sd)
-	
-	return stats
+        printSD(sd)
+
+        stats = addAnswer(stats, sd)
+
+    return stats
 
 #Writes k centers statistics to a csv file
 def writeKCOStats(stats):
@@ -199,7 +199,7 @@ def writeKCOStats(stats):
 		newStats.append(np.array(temp))
 
 	newStats = np.array(newStats)
-	np.savetxt("outputs/kcenterOutStats.csv", newStats, fmt = '%s', delimiter = ",")
+	np.savetxt("outputs/kMeansOutStats.csv", newStats, fmt = '%s', delimiter = ",")
 	
 
 ############################################################################################
