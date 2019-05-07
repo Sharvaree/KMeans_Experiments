@@ -4,7 +4,7 @@ import random
 import sys
 import os
 import statistics
-
+from scipy.spatial import distance
 #Custom imports
 import kcentersOutliers as kco
 import generatorNormal as gn
@@ -29,7 +29,7 @@ class synthD:
     data = 0   #data points
     centers = []
     costs = []
-    phi_star= 0   #thresholded cost
+    #phi_star= 0   #thresholded cost
     extrastats = [] #Please make sure len(extrastats) == len(extraInfo) if possible
 
 #Reads csv file to numpy array.
@@ -117,6 +117,15 @@ def readSynthetic(fileName):
 	sd.costs = []
 	return sd
 
+#computes phi_star
+
+def compute_phi_star(sd):
+    dist_matrix= distance.cdist(sd.data[sd.k + sd.z:], sd.data[:sd.k])
+    dist = np.amin(dist_matrix, axis = 1)
+    phi_star=np.sum(dist)
+    return phi_star
+        
+
 #Prints a synthetic data structure
 def printSD(sd):
 	print("syntheticData: [n: " + str(sd.n) + ", d: " + str(sd.d) + ", k: " + str(sd.k) + ", rang: " + str(int(sd.rang)) + ", z: " + str(sd.z) +", num: "+ str(sd.c) + ", sigma: " + str(sd.s) + ", costs", str(sd.costs),"]")
@@ -142,7 +151,7 @@ def addAnswer(stats, sd):
 		
 
 #Compute k centers w/ outliers
-def computeKCoutliers(synthD):
+def computeKMCoutliers(synthD):
     num = 0
     stats = []
     for f in synthD:
@@ -153,11 +162,11 @@ def computeKCoutliers(synthD):
 
         for i in range(5):
             #Running kMeansOut on the data
-            kcent, cid, dist = kmo.kmeansOutliers(sd.data,sd.phi_star,sd.z, sd.k)
+            kcent, cid, dist = kmo.kmeansOutliers(sd.data,compute_phi_star(sd),sd.z, sd.k)
             ans = kcent
-
+            average_cost= np.sum(kmo.cost(sd.data, cid, kcent, sd.z))
             #Computing cost
-            sd.costs.append(kmo.cost())
+            sd.costs.append(average_cost)
 
         #example for adding extra stats, i.e. time. For headers, go to top
         sd.extrastats = [0,num, num*num]
@@ -199,7 +208,7 @@ def writeKCOStats(stats):
 		newStats.append(np.array(temp))
 
 	newStats = np.array(newStats)
-	np.savetxt("outputs/kMeansOutStats.csv", newStats, fmt = '%s', delimiter = ",")
+	np.savetxt("outputs/KMcenterOutStats.csv", newStats, fmt = '%s', delimiter = ",")
 	
 
 ############################################################################################
@@ -208,14 +217,14 @@ def writeKCOStats(stats):
 def main():
 	#Creates synthetic data as described in paper 10 copies each
 	#createSynthDataGKL()
-	createSynthDataGKLCenters()
+	#createSynthDataGKLCenters()
 	
 	#Gets the names of the synthetic data files
 	#synthData = getAllSynthNames()
 	synthData = getAllSynthNamesCenters()
 
 	#Computing sds Note: can run stats = computeKCoutliers(synthData[:nums]) so it only runs the first nums files. Good for testing
-	stats = computeKCoutliers(synthData)
+	stats = computeKMCoutliers(synthData)
 
 	#Writing stats
 	writeKCOStats(stats)
