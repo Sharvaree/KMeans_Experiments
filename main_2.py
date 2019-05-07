@@ -11,12 +11,14 @@ import generatorNormal as gn
 import kcenterAux as kc
 import generatorNormalCenters as gnc
 import KMeansOut as kmo
+import numba
 
 #Constants
 extraInfo = ["example1", "example2", "example3"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
 
 #Class that contains info and 
 #data of a single synthetic file
+@numba.njit()
 class synthD:
     filename = ""
     n = 0   #number of points
