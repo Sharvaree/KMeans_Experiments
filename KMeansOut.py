@@ -50,7 +50,7 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
         dist, cid = update_dist(dist, tempdist, cid, data, i)
         
         #thresholded value
-        th = (phi_star/z) * np.ones(len(data)) 
+        th = (phi_star/z)*np.ones(len(data))
         
         #Distribution post thresholding
         distribution = np.minimum(dist, th)
