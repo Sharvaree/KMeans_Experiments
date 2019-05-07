@@ -18,7 +18,7 @@ import time
 def get_csv(fileName):
     return np.genfromtxt(fileName, delimiter=',')
 
-# @numba.njit() #to run functions without Python interpretor
+@numba.njit() #to run functions without Python interpretor
 def update_dist(dist, tempdist, cid, data, ix):
     for indx in range(len(data)):
         if dist[indx] <= tempdist[indx]:
