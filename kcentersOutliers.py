@@ -54,10 +54,22 @@ class kcentersOut:
             if(DEBUG):
                 print(distribution[0:100])
             #Picking center
-            winnerInd = np.random.choice(size,1, p = distribution)
+            winnerInd = [0]
+            if(not np.isnan(distribution).any()):
+                winnerInd = np.random.choice(size,1, p = distribution)
+            else:
+                if(tempSum >= 0):			
+                    pick = random.randint(0,tempSum)
+                    distribution = np.where(dist > self.r2, 1, [0]*size)
+                    ind = 0
+                    while(pick > 0):
+                        if(distribution[ind] == 1):
+                            pick -= 1
+                        ind += 1
+                    winnerInd == [ind]
             winners.append(winnerInd)
             if(DEBUG):
-                print(winnerInd)
+                print(winnerInd, "\n", self.data[winnerInd])
             #Adding center
             centers = np.append(centers, self.data[winnerInd], axis = 0)
 

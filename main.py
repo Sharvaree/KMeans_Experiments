@@ -9,6 +9,10 @@ import statistics
 import kcentersOutliers as kco
 import generatorNormal as gn
 import kcenterAux as kc
+import generatorNormalCenters as gnc
+
+#Constants
+extraInfo = ["example1", "example2", "example3"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
 
 #Class that contains info and 
 #data of a single synthetic file
@@ -24,6 +28,7 @@ class synthD:
 	data = 0
 	centers = []
 	costs = []
+	extrastats = [] #Please make sure len(extrastats) == len(extraInfo) if possible
 	
 #Reads csv file to numpy array.
 def get_csv(fileName):
@@ -48,11 +53,37 @@ def createSynthDataGKL():
 	print("Generated files from of synthetic data \n as done by Gupta, Kumar and Lu.\n Listed below")
 	print(files)
 
+#This function creates the synthetic data described by
+#Gupta, Kumar and Lu in their paper "Local Search Methods 
+#for k-Means with Outliers" 
+def createSynthDataGKLCenters():
+	files = []
+	sds = [1, 5, 10]
+	ks = [10, 20]
+	zs = [25,50,100]
+	ds = [2,15]
+	for sd in sds:
+		for k in ks:
+			for z in zs:
+				for d in ds:
+					for num in range(10):
+						files.append(gnc.generatorNormCenters(10000-k-z,d ,k,50.0,sd,z,num))
+	print("----------------\nFiles generated\n----------------")
+	print("Generated files from of synthetic data \n as done by Gupta, Kumar and Lu.\n Listed below")
+	print(files)
+
 #Gets the names of all synthetic data files
 def getAllSynthNames():
 	fns = os.listdir("syntheticData/")
 	for i in range(len(fns)):
 		fns[i] = "syntheticData/" + fns[i]
+	return fns
+
+#Gets the names of all synthetic data files for centers
+def getAllSynthNamesCenters():
+	fns = os.listdir("syntheticDataCenters/")
+	for i in range(len(fns)):
+		fns[i] = "syntheticDataCenters/" + fns[i]
 	return fns
 
 #Separate strings by alphabetical letters
@@ -71,7 +102,7 @@ def splitalpha(s):
 #Reads in a synthetic data file along with attributes
 def readSynthetic(fileName):
 	sd = synthD()
-	parse = splitalpha(fileName.lstrip("syntheticData/"))
+	parse = splitalpha(fileName.lstrip("syntheticData/").lstrip("syntheticDataCenters/"))
 	sd.filename = fileName
 	sd.n = int(parse[0])
 	sd.d = int(parse[1])
@@ -99,9 +130,11 @@ def addAnswer(stats, sd):
 				matching = False
 		if(matching):
 			stats[i][6].append(sd.costs)
+			stats[i][7].append(sd.extrastats)
 			found = True
 	if(not found):
 		temp.append([sd.costs])
+		temp.append([sd.extrastats])
 		stats.append(temp)
 	return stats
 		
@@ -124,6 +157,9 @@ def computeKCoutliers(synthD):
 			#Computing cost
 			sd.costs.append(kc.kCCost(sd.data, ans, sd.s))
 
+		#example for adding extra stats, i.e. time. For headers, go to top
+		sd.extrastats = [0,num, num*num]
+
 		printSD(sd)
 			
 		stats = addAnswer(stats, sd)
@@ -134,16 +170,28 @@ def computeKCoutliers(synthD):
 def writeKCOStats(stats):
 	header = ["n","d","k","rang","z","sigma"]
 	newStats = []
-	for i in range(len(stats[0][6])-1):
+	for i in range(len(stats[0][6])):
 		header.append("Run " + str(i+1) + " cost")
 	header.append("Average")
+	header.extend(extraInfo)
 	
 	newStats.append(np.array(header))
 	for i in range(len(stats)):
-		temp = stats[i][0:5]
+		temp = stats[i][0:6]
 		for j in range(len(stats[i][6])):
 			temp.append(statistics.mean(stats[i][6][j]))
 		temp.append(statistics.mean(temp[6:]))
+
+		s = len(stats[i][7][0])
+		aver = [0] * s
+		for j in range(len(stats[i][7])):
+			print(stats[i][7][j])
+			for k in range(s):
+				aver[k] += stats[i][7][j][k]
+		for j in range(s):
+			aver[j] = float(aver[j])/float(len(stats[i][7]))
+		temp.extend(aver)
+
 		for j in range(len(temp)):
 			temp[j] = str(temp[j])
 		newStats.append(np.array(temp))
@@ -158,27 +206,18 @@ def writeKCOStats(stats):
 def main():
 	#Creates synthetic data as described in paper 10 copies each
 	#createSynthDataGKL()
-
+	#createSynthDataGKLCenters()
+	
 	#Gets the names of the synthetic data files
-	synthData = getAllSynthNames()
+	#synthData = getAllSynthNames()
+	synthData = getAllSynthNamesCenters()
 
-	'''
-	#reads data and parses first file in folder
-	sd = readSynthetic(synthData[31])
-
-	#Running kcenterOut on the data
-	kcent = kco.kcentersOut(sd.data,sd.k,sd.s)
-	ans = kcent.kcentersOut()
-
-	printSD(sd)
-	kc.kCCost(sd.data, ans, sd.s)
-	'''
-
-	#Computing sds
+	#Computing sds Note: can run stats = computeKCoutliers(synthData[:nums]) so it only runs the first nums files. Good for testing
 	stats = computeKCoutliers(synthData)
 
 	#Writing stats
 	writeKCOStats(stats)
+	
 ############################################################################################
 
 #Sample functions
