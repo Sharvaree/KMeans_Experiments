@@ -6,7 +6,7 @@ import random
 DEBUG = False
 UNIFORM = True
 
-class kcentersOut:
+class gonzalez:
     def get_csv(self,fileName):
         return np.genfromtxt(fileName, delimiter=',')
 
@@ -15,7 +15,7 @@ class kcentersOut:
         self.data = data
         self.r2 = r * 2
         
-    def kcentersOut(self):
+    def gonzalez(self):
         size = len(self.data)
 
         #Random initialization
@@ -43,31 +43,8 @@ class kcentersOut:
             dist = np.array([dist[i] if dist[i] <= tempdist[i] else tempdist[i] for i in range(size)])
             if(DEBUG):
                 print(dist[0:100])
-            #Computinf distribution
-            if(UNIFORM):
-                distribution = np.where(dist > self.r2, 1, [0]*size)
-            else:
-                distribution = np.where(dist > self.r2, dist, [0]*size)
-            if(DEBUG):
-                print(dist[0:100])
-            tempSum = sum(distribution)
-            distribution = distribution/float(tempSum)
-            if(DEBUG):
-                print(distribution[0:100])
             #Picking center
-            winnerInd = [0]
-            if(not np.isnan(distribution).any()):
-                winnerInd = np.random.choice(size,1, p = distribution)
-            else:
-                if(tempSum >= 0):			
-                    pick = random.randint(0,tempSum)
-                    distribution = np.where(dist > self.r2, 1, [0]*size)
-                    ind = 0
-                    while(pick > 0):
-                        if(distribution[ind] == 1):
-                            pick -= 1
-                        ind += 1
-                    winnerInd == [ind]
+            winnerInd = [np.argmax(dist)]
             winners.append(winnerInd)
             if(DEBUG):
                 print(winnerInd, "\n", self.data[winnerInd])
