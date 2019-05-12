@@ -75,7 +75,7 @@ def cost(data, cid, centers, z):
 
     dist= distance.cdist(data, np.array(centers))
     dist = np.amin(dist, axis = 1)
-    indx_list = np.argpartition(dist, -2*z)[-2*z:] #get index of farthest 2z points
+    indx_list = np.argpartition(dist, -z)[-z:] #get index of farthest z points
     
     cid_pruned = cid.copy()
     cid_pruned[indx_list] = len(centers) + 1 # comment this line out if you do not want to remove points
@@ -86,7 +86,7 @@ def cost(data, cid, centers, z):
         cluster_points = data[cluster_indx]
         cost[i] = np.mean((cluster_points-centers[i])**2)
         
-    return cost
+    return cost, indx_list
 
 #dummy data
 from sklearn import cluster, datasets, mixture
@@ -96,6 +96,6 @@ noisy_circles = datasets.make_circles(n_samples=n_samples, factor=.5,
 
 
 centers, cid, dist0 = kmeansOutliers(noisy_circles[0], 100, 10, 5)
-costs = cost(noisy_circles[0], cid, centers, 10)
+costs, index_list = cost(noisy_circles[0], cid, centers, 10)
 #print(costs)
 
