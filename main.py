@@ -3,7 +3,7 @@ import math
 import random
 import sys
 import os
-#import statistics
+import statistics
 import matplotlib.pyplot as plt
 
 #Custom imports
@@ -300,7 +300,7 @@ def plotNewStats(stats):
 	plt.clf()
 
 def plotGonOut(stats,stats2):
-	ks = stats[:,6]
+	ks = stats[:, 6]
 	avprec = stats[:, 18]
 	maxprec = stats[:, 19]
 	avrec = stats[:,20]
@@ -374,7 +374,7 @@ def main():
 	#Computing sds Note: can run stats = computeKCoutliers(synthData[:nums]) so it only runs the first nums files. Good for testing
 	writeStats = []
 	writeStatsGon = []
-	for i in range(18,int(len(synthData)/10) - 1):
+	for i in range(int(len(synthData)/10) - 1):
 		statsGon = computeKC(synthData[i*10:(i+1)*10])
 		stats = computeKCoutliers(synthData[i*10:(i+1)*10])
 		writeStats.extend(stats)
@@ -389,7 +389,7 @@ def main():
 	writeKCOStats(writeStats,"center.out")
 
 	#Writing stats gonzalez
-	writeCOStats(gonzalez, "gonzalez.out")
+	writeKCOStats(writeStatsGon, "gonzalez.out")
 	
 ############################################################################################
 
