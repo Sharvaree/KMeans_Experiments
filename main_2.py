@@ -166,7 +166,8 @@ def computeKMCoutliers(synthD):
             #Running kMeansOut on the data
             kcent, cid, dist = kmo.kmeansOutliers(sd.data,compute_phi_star(sd),sd.z, sd.k)
             ans = kcent
-            average_cost= np.sum(kmo.cost(sd.data, cid, kcent, sd.z))
+            kmo_cost, index_list =kmo.cost(sd.data, cid, kcent, sd.z)
+            average_cost= np.sum(kmo_cost)
             #Computing cost
             sd.costs.append(average_cost)
 
