@@ -10,15 +10,13 @@ import kcentersOutliers as kco
 import generatorNormal as gn
 import kcenterAux as kc
 import generatorNormalCenters as gnc
-import KMeansOut as kmo
-import numba
+import KMeansOut2 as kmo
 
 #Constants
 extraInfo = ["example1", "example2", "example3"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
 
 #Class that contains info and 
 #data of a single synthetic file
-@numba.njit()
 class synthD:
     filename = ""
     n = 0   #number of points
@@ -152,8 +150,8 @@ def addAnswer(stats, sd):
 	return stats
 		
 
-#Compute k centers w/ outliers
-def computeKMCoutliers(synthD):
+#Compute k means w/ outliers
+def computeKMoutliers(synthD):
     num = 0
     stats = []
     for f in synthD:
@@ -223,11 +221,11 @@ def main():
 	#createSynthDataGKLCenters()
 	
 	#Gets the names of the synthetic data files
-	#synthData = getAllSynthNames()
-	synthData = getAllSynthNamesCenters()
+	synthData = getAllSynthNames()
+	#synthData = getAllSynthNamesCenters()
 
 	#Computing sds Note: can run stats = computeKCoutliers(synthData[:nums]) so it only runs the first nums files. Good for testing
-	stats = computeKMCoutliers(synthData)
+	stats = computeKMoutliers(synthData)
 
 	#Writing stats
 	writeKCOStats(stats)
