@@ -1,0 +1,163 @@
+num_cluster:10, z:25, min_value:-16, max_value:15
+Phi_star: 22358.515520280198
+Precision:0.7575757575757576, recall:0.7575757575757576
+num_cluster:10, z:25, min_value:-16, max_value:20
+Phi_star: 21748.042431638085
+Precision:0.6756756756756757, recall:0.6756756756756757
+num_cluster:10, z:25, min_value:-16, max_value:33
+Phi_star: 22717.37705525755
+Precision:0.6578947368421053, recall:0.6578947368421053
+num_cluster:10, z:25, min_value:0, max_value:15
+Phi_star: 23098.35435951625
+Precision:0.625, recall:0.625
+num_cluster:10, z:25, min_value:0, max_value:20
+Phi_star: 24192.058262977873
+Precision:0.5681818181818182, recall:0.5681818181818182
+num_cluster:10, z:25, min_value:0, max_value:33
+Phi_star: 24470.855413785634
+Precision:0.5434782608695652, recall:0.5434782608695652
+num_cluster:10, z:25, min_value:7.693475e-08, max_value:15
+Phi_star: 23088.84618417039
+Precision:0.5, recall:0.5
+num_cluster:10, z:25, min_value:7.693475e-08, max_value:20
+Phi_star: 25995.324918981387
+Precision:0.5102040816326531, recall:0.5102040816326531
+num_cluster:10, z:25, min_value:7.693475e-08, max_value:33
+Phi_star: 24973.609099126
+Precision:0.5952380952380952, recall:0.5952380952380952
+num_cluster:10, z:50, min_value:-16, max_value:15
+Phi_star: 24749.30486451147
+Precision:0.5882352941176471, recall:0.5882352941176471
+num_cluster:10, z:50, min_value:-16, max_value:20
+Phi_star: 25549.783549447544
+Precision:0.5319148936170213, recall:0.5319148936170213
+num_cluster:10, z:50, min_value:-16, max_value:33
+Phi_star: 25803.084947989482
+Precision:0.5813953488372093, recall:0.5813953488372093
+num_cluster:10, z:50, min_value:0, max_value:15
+Phi_star: 29066.616617838376
+Precision:0.5154639175257731, recall:0.5154639175257731
+num_cluster:10, z:50, min_value:0, max_value:20
+Phi_star: 24931.30478836594
+Precision:0.5050505050505051, recall:0.5050505050505051
+num_cluster:10, z:50, min_value:0, max_value:33
+Phi_star: 25352.315186780415
+Precision:0.5154639175257731, recall:0.5154639175257731
+num_cluster:10, z:50, min_value:7.693475e-08, max_value:15
+Phi_star: 29607.54315307723
+Precision:0.5102040816326531, recall:0.5102040816326531
+num_cluster:10, z:50, min_value:7.693475e-08, max_value:20
+Phi_star: 28553.889614312506
+Precision:0.5050505050505051, recall:0.5050505050505051
+num_cluster:10, z:50, min_value:7.693475e-08, max_value:33
+Phi_star: 28709.5924163866
+Precision:0.5319148936170213, recall:0.5319148936170213
+num_cluster:10, z:100, min_value:-16, max_value:15
+Phi_star: 29612.051476977565
+Precision:0.5076142131979695, recall:0.5076142131979695
+num_cluster:10, z:100, min_value:-16, max_value:20
+Phi_star: 29593.039667583726
+Precision:0.5405405405405406, recall:0.5405405405405406
+num_cluster:10, z:100, min_value:-16, max_value:33
+Phi_star: 30733.41272824872
+Precision:0.5586592178770949, recall:0.5586592178770949
+num_cluster:10, z:100, min_value:0, max_value:15
+Phi_star: 31891.66781871359
+Precision:0.5025125628140703, recall:0.5025125628140703
+num_cluster:10, z:100, min_value:0, max_value:20
+Phi_star: 30287.20216065019
+Precision:0.5050505050505051, recall:0.5050505050505051
+num_cluster:10, z:100, min_value:0, max_value:33
+Phi_star: 32384.395186549296
+Precision:0.546448087431694, recall:0.546448087431694
+num_cluster:10, z:100, min_value:7.693475e-08, max_value:15
+Phi_star: 31988.764304593715
+Precision:0.5128205128205128, recall:0.5128205128205128
+num_cluster:10, z:100, min_value:7.693475e-08, max_value:20
+Phi_star: 32773.60863502382
+Precision:0.5208333333333334, recall:0.5208333333333334
+num_cluster:10, z:100, min_value:7.693475e-08, max_value:33
+Phi_star: 34140.50077932057
+Precision:0.5235602094240838, recall:0.5235602094240838
+num_cluster:20, z:25, min_value:-16, max_value:15
+Phi_star: 28045.998645953456
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:-16, max_value:20
+Phi_star: 25973.85157297038
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:-16, max_value:33
+Phi_star: 25319.093678068923
+Precision:0.5208333333333334, recall:0.5208333333333334
+num_cluster:20, z:25, min_value:0, max_value:15
+Phi_star: 26202.50852008967
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:0, max_value:20
+Phi_star: 27642.553104807408
+Precision:0.5102040816326531, recall:0.5102040816326531
+num_cluster:20, z:25, min_value:0, max_value:33
+Phi_star: 27256.414589295295
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:7.693475e-08, max_value:15
+Phi_star: 29131.690550689393
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:7.693475e-08, max_value:20
+Phi_star: 26602.368245084566
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:7.693475e-08, max_value:33
+Phi_star: 26990.869822029876
+Precision:0.5102040816326531, recall:0.5102040816326531
+num_cluster:20, z:50, min_value:-16, max_value:15
+Phi_star: 25862.46753035797
+Precision:0.5102040816326531, recall:0.5102040816326531
+num_cluster:20, z:50, min_value:-16, max_value:20
+Phi_star: 26641.08482696677
+Precision:0.5050505050505051, recall:0.5050505050505051
+num_cluster:20, z:50, min_value:-16, max_value:33
+Phi_star: 28703.994690762607
+Precision:0.5154639175257731, recall:0.5154639175257731
+num_cluster:20, z:50, min_value:0, max_value:15
+Phi_star: 27934.258723761537
+Precision:0.5102040816326531, recall:0.5102040816326531
+num_cluster:20, z:50, min_value:0, max_value:20
+Phi_star: 27409.98650739838
+Precision:0.5154639175257731, recall:0.5154639175257731
+num_cluster:20, z:50, min_value:0, max_value:33
+Phi_star: 32993.09990787571
+Precision:0.5263157894736842, recall:0.5263157894736842
+num_cluster:20, z:50, min_value:7.693475e-08, max_value:15
+Phi_star: 33397.48050749563
+Precision:0.5, recall:0.5
+num_cluster:20, z:50, min_value:7.693475e-08, max_value:20
+Phi_star: 30029.86744042619
+Precision:0.5, recall:0.5
+num_cluster:20, z:50, min_value:7.693475e-08, max_value:33
+Phi_star: 28594.967068910024
+Precision:0.5319148936170213, recall:0.5319148936170213
+num_cluster:20, z:100, min_value:-16, max_value:15
+Phi_star: 31360.906200972968
+Precision:0.5154639175257731, recall:0.5154639175257731
+num_cluster:20, z:100, min_value:-16, max_value:20
+Phi_star: 28713.704855426888
+Precision:0.5050505050505051, recall:0.5050505050505051
+num_cluster:20, z:100, min_value:-16, max_value:33
+Phi_star: 30791.686951033065
+Precision:0.5128205128205128, recall:0.5128205128205128
+num_cluster:20, z:100, min_value:0, max_value:15
+Phi_star: 29265.03776979875
+Precision:0.5025125628140703, recall:0.5025125628140703
+num_cluster:20, z:100, min_value:0, max_value:20
+Phi_star: 30751.907984882848
+Precision:0.5050505050505051, recall:0.5050505050505051
+num_cluster:20, z:100, min_value:0, max_value:33
+Phi_star: 32686.650599389308
+Precision:0.5181347150259067, recall:0.5181347150259067
+num_cluster:20, z:100, min_value:7.693475e-08, max_value:15
+Phi_star: 30950.34229823778
+Precision:0.5025125628140703, recall:0.5025125628140703
+num_cluster:20, z:100, min_value:7.693475e-08, max_value:20
+Phi_star: 30524.131829172107
+Precision:0.5050505050505051, recall:0.5050505050505051
+num_cluster:20, z:100, min_value:7.693475e-08, max_value:33
+Phi_star: 30485.220081610398
+Precision:0.5263157894736842, recall:0.5263157894736842
+

@@ -1,0 +1,12 @@
+num_cluster:10, z:25, min_value:-0.022, max_value:0.023
+Precision:0.8064516129032258, recall:0.8064516129032258
+num_cluster:10, z:50, min_value:-0.022, max_value:0.023
+Precision:0.684931506849315, recall:0.684931506849315
+num_cluster:10, z:100, min_value:-0.022, max_value:0.023
+Precision:0.7299270072992701, recall:0.7299270072992701
+num_cluster:20, z:25, min_value:-0.022, max_value:0.023
+Precision:0.5555555555555556, recall:0.5555555555555556
+num_cluster:20, z:50, min_value:-0.022, max_value:0.023
+Precision:0.5494505494505495, recall:0.5494505494505495
+num_cluster:20, z:100, min_value:-0.022, max_value:0.023
+Precision:0.5813953488372093, recall:0.5813953488372093

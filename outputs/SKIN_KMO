@@ -1,0 +1,72 @@
+num_cluster:10, z:25, min_value:0, max_value:200
+phi_star:7792927.748418452
+Precision:0.5, recall:0.5
+num_cluster:10, z:25, min_value:0, max_value:255
+phi_star:7740058.8188910615
+Precision:0.5, recall:0.5
+num_cluster:10, z:25, min_value:100, max_value:200
+phi_star:7413917.49465422
+Precision:0.5, recall:0.5
+num_cluster:10, z:25, min_value:100, max_value:255
+phi_star:8120686.739953208
+Precision:0.5, recall:0.5
+num_cluster:10, z:50, min_value:0, max_value:200
+phi_star:7443774.006885074
+Precision:0.5, recall:0.5
+num_cluster:10, z:50, min_value:0, max_value:255
+phi_star:6935323.681895561
+Precision:0.5, recall:0.5
+num_cluster:10, z:50, min_value:100, max_value:200
+phi_star:9236050.868594594
+Precision:0.5, recall:0.5
+num_cluster:10, z:50, min_value:100, max_value:255
+phi_star:9750556.802329747
+Precision:0.5, recall:0.5
+num_cluster:10, z:100, min_value:0, max_value:200
+phi_star:6735704.613621433
+Precision:0.5, recall:0.5
+num_cluster:10, z:100, min_value:0, max_value:255
+phi_star:7359794.375646826
+Precision:0.5, recall:0.5
+num_cluster:10, z:100, min_value:100, max_value:200
+phi_star:6875584.219530147
+Precision:0.5, recall:0.5
+num_cluster:10, z:100, min_value:100, max_value:255
+phi_star:7806699.897744252
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:0, max_value:200
+phi_star:5436556.273542098
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:0, max_value:255
+phi_star:5681789.106020882
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:100, max_value:200
+phi_star:5300110.79939011
+Precision:0.5, recall:0.5
+num_cluster:20, z:25, min_value:100, max_value:255
+phi_star:5058933.616777163
+Precision:0.5, recall:0.5
+num_cluster:20, z:50, min_value:0, max_value:200
+phi_star:4870518.1339723375
+Precision:0.5, recall:0.5
+num_cluster:20, z:50, min_value:0, max_value:255
+phi_star:5495361.7045022575
+Precision:0.5, recall:0.5
+num_cluster:20, z:50, min_value:100, max_value:200
+phi_star:5563246.2182888575
+Precision:0.5, recall:0.5
+num_cluster:20, z:50, min_value:100, max_value:255
+phi_star:5529262.685041413
+Precision:0.5, recall:0.5
+num_cluster:20, z:100, min_value:0, max_value:200
+phi_star:5734509.47798294
+Precision:0.5, recall:0.5
+num_cluster:20, z:100, min_value:0, max_value:255
+phi_star:5245801.902848834
+Precision:0.5, recall:0.5
+num_cluster:20, z:100, min_value:100, max_value:200
+phi_star:5366377.771006571
+Precision:0.5, recall:0.5
+num_cluster:20, z:100, min_value:100, max_value:255
+phi_star:5117532.272735031
+Precision:0.5, recall:0.5
