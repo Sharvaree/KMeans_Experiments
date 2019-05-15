@@ -30,9 +30,10 @@ def update_dist(dist, tempdist, cid, data, ix):
 
 
 def kmeansOutliers(data, phi_star, z, num_clusters):
-    
+    #np.random.seed(1)
+
     # Random initialization
-    centers = np.array([data[random.randint(0, len(data)-1)]]) 
+    centers = np.array([data[0]]) 
     
     # set size of points as max numbers for dist array
     dist = np.array([1.7e308]*len(data))
@@ -84,18 +85,18 @@ def cost(data, cid, centers, z):
     for i in range(len(centers)):
         cluster_indx = np.where(cid_pruned==i)
         cluster_points = data[cluster_indx]
-        cost[i] = np.mean((cluster_points-centers[i])**2)
+        cost[i] = np.sum((cluster_points-centers[i])**2)
+    total_cost= np.sum(cost)/len(data)
         
-    return cost, indx_list
+    return total_cost, indx_list
 
 #dummy data
 from sklearn import cluster, datasets, mixture
-n_samples=100
-noisy_circles = datasets.make_circles(n_samples=n_samples, factor=.5,
-                                      noise=.05)
+#n_samples=100
+#noisy_circles = datasets.make_circles(n_samples=n_samples, factor=.5,noise=.05)
 
 
-centers, cid, dist0 = kmeansOutliers(noisy_circles[0], 100, 10, 5)
-costs, index_list = cost(noisy_circles[0], cid, centers, 10)
+#centers, cid, dist0 = kmeansOutliers(noisy_circles[0], 100, 10, 5)
+#costs, index_list = cost(noisy_circles[0], cid, centers, 10)
 #print(costs)
 
