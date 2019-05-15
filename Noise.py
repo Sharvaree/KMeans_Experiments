@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[4]:
+
+
 import numpy as np
 from scipy.spatial import distance
 
@@ -32,7 +38,8 @@ def cost(data, cid, centers, z):
         
     return cost, indx_list
 
-def add_random_noise_th(data, z, max_value, min_value):
+
+def add_rand_noise_th(data, z, max_value, min_value):
     z_indx= np.random.choice(len(data)-1, z)#pick z random points
     #x, d = data.shape
     for index in z_indx:
