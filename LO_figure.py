@@ -83,7 +83,7 @@ def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
     #x1= KPP.predict(data_with_outliers)
         #print(("Precision:{}, recall:{}". format(precision, recall)))
     print(("Precision:{}, recall:{}". format(precision, recall)))
-    return new_centers, cid
+    return new_centers, cid, indx_list
 
     
 def LO_cost(data, cid, centers, z):

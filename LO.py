@@ -23,7 +23,7 @@ def  KPP_centers(data, num_clusters):
     KPP=KMeanPlusPlus(num_clusters=num_clusters, init=init)
     KPP.fit(data)
     KPP_centers= KPP.centers
-    return KPP_centers
+    return np.array(KPP_centers)
 
 def add_noise(data, z, min_value, max_value):
     data_with_outliers, z_indx = add_rand_noise_th(data, z, min_value, max_value)
@@ -77,7 +77,7 @@ def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
     #x1= KPP.predict(data_with_outliers)
         #print(("Precision:{}, recall:{}". format(precision, recall)))
     print(("Precision:{}, recall:{}". format(precision, recall)))
-    return new_centers, cid
+    return new_centers, cid, indx_list
 
     
 def LO_cost(data, cid, centers, z):

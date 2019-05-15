@@ -28,10 +28,10 @@ data_actual= np.delete(processed_data, 0, axis=1)
 n_components=40
 pca = PCA(n_components=n_components)
 pca.fit(data_actual.T)
-a= pca.components_
+a= pca.components_.T
 print("PCA done. Considering first {} principal components".format(n_components))
-init= a[np.random.choice(1, len(a)-1)]
-data=a.T
+init= a[random.randint(1, len(a)-1)]
+data=a
 #data= data[0:8000, :]
 num_clusters=10
 z=25
