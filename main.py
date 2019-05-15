@@ -16,7 +16,7 @@ import gonzalez as gon
 import KMeansOut2 as kmo
 
 #Constants
-extraInfo = ["av prec", "max prec", "av recall", "max recall"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
+extraInfo = ["av prec", "max prec", "av recall", "max recall", "prec sd", "recall sd"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
 
 #Class that contains info and 
 #data of a single synthetic file
@@ -257,6 +257,21 @@ def writeKCOStats(stats, filename):
 			aver[j] = float(aver[j])/float(len(stats[i][8]))
 		temp.extend(aver)
 
+		#Sds
+		sds = [0]*2
+		precs = np.array(stats[i][8])[:,0]
+		recs = np.array(stats[i][8])[:,2]
+		
+		'''
+		for i in range(len(precs)):
+			precs[i] = np.std(precs[i])
+			recs[i] = np.std(recs[i])
+		'''
+
+		sds[0] = np.std(precs)
+		sds[1] = np.std(recs)
+		temp.extend(sds)
+
 		for j in range(len(temp)):
 			temp[j] = str(temp[j])
 		newStats.append(np.array(temp))
@@ -281,6 +296,15 @@ def processStats(stats):
 		for j in range(s):
 			aver[j] = float(aver[j])/float(len(stats[i][8]))
 		temp.extend(aver)
+
+		#sds
+		sds = [0.0]*2
+		precs = np.array(stats[i][8])[:,0]
+		recs = np.array(stats[i][8])[:,2]
+
+		sds[0] = np.std(precs)
+		sds[1] = np.std(recs)
+		temp.extend(sds)
 
 		newStats.append(np.array(temp))
 
@@ -321,12 +345,16 @@ def plotGonOut(stats,stats2):
 	maxprec = stats[:, 19]
 	avrec = stats[:,20]
 	maxrec = stats[:,21]
+	sdprec = stats[:,22]
+	sdrec = stats[:,23]
 
 	ks = stats2[:,6]
 	avprec2 = stats2[:, 18]
 	maxprec2 = stats2[:, 19]
 	avrec2 = stats2[:,20]
 	maxrec2 = stats2[:,21]
+	sdprec2 = stats2[:,22]
+	sdrec2 = stats2[:,23]
 
 	plotpts = np.array([avprec, maxprec, avrec, maxrec])
 
@@ -342,7 +370,7 @@ def plotGonOut(stats,stats2):
 	plt.ylabel("Precision")
 	ax = plt.gca()
 	ax.set_ylim([0,1])
-	plt.scatter(ks, avprec)
+	plt.errorbar(ks, avprec, yerr=sdprec)
 	plt.plot(ks, avprec, linestyle = '-', label = "Mean Precision Algorithm 1")
 	#plt.scatter(ks, maxprec)
 	#plt.plot(ks, maxprec,linestyle = '--', label = "Max Precision Algorithm 1")
@@ -360,7 +388,7 @@ def plotGonOut(stats,stats2):
 	plt.ylabel("Recall")
 	ax = plt.gca()
 	ax.set_ylim([0,1])
-	plt.scatter(ks, avrec)
+	plt.errorbar(ks, avrec, yerr = sdrec)
 	plt.plot(ks, avrec,linestyle = '-', label = "Mean Recall Algorithm 1")
 	#plt.scatter(ks, maxrec)
 	#plt.plot(ks, maxrec,linestyle = '--', label = "Max Recall Algorithm 1")
@@ -389,10 +417,7 @@ def boxPlot(stats):
 	stats = sorted(stats, key=operator.itemgetter(6))
 	stats = np.array(stats)
 	x = stats[:,6]
-	print(stats[:,10])
 	y = flatten(stats[:,10])
-	print(x)
-	print(y)
 	
 	plt.figure(figsize=(6.4,4.8))
 	plt.title("Figure   n=" + str(int(stats[0][0])) + ", d=" + str(int(stats[0][1])) + ", k=" + str(int(stats[0][2])) + ", rang=" + str(int(float(stats[0][3]))) + ", z=" + str(int(stats[0][4])) + ", sigma=" + str(int(stats[0][6])) + ".")
@@ -422,7 +447,7 @@ def main():
 	#Computing sds Note: can run stats = computeKCoutliers(synthData[:nums]) so it only runs the first nums files. Good for testing
 	writeStats = []
 	writeStatsGon = []
-	for i in range(int(len(synthData)/10) - 1):
+	for i in range(2):#int(len(synthData)/10) - 1):
 		statsGon = computeKC(synthData[i*10:(i+1)*10])
 		stats = computeKCoutliers(synthData[i*10:(i+1)*10])
 		writeStats.extend(stats)

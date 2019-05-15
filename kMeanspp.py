@@ -27,7 +27,7 @@ def update_dist(dist, tempdist, cid, data, ix):
     return dist, cid
 
 
-def kmeansOutliers(data, phi_star, z, num_clusters):
+def kmeanspp(data,num_clusters):
     
     # Random initialization
     wins = [random.randint(0, len(data)-1)]
@@ -39,8 +39,7 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
     #index
     cid =  np.zeros(len(data))
     
-    for i in range(num_clusters):
-        
+    for i in range(num_clusters-1):
         #Calculate distance to new center
         tempdist = distance.cdist(data, np.array([centers[len(centers)-1]]))
         tempdist = np.array([item[0] for item in tempdist])
@@ -48,16 +47,9 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
         #keep only the distance min(dist, tempdist)
         dist, cid = update_dist(dist, tempdist, cid, data, i)
         
-        #thresholded value
-        th = (phi_star/z)*np.ones(len(data))
-        
-        #Distribution post thresholding
-        distribution = np.minimum(dist, th)
-        tempSum = sum(distribution)
-        
-        
         #Normalizing
-        distribution = distribution/tempSum
+        tempSum = sum(dist)
+        distribution = dist/tempSum
         
         #Picking new center with the above distribution
         new_index = np.random.choice(len(data), 1, p=distribution)
@@ -65,9 +57,8 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
         
         #Adding new center
         centers = np.append(centers, data[new_index], axis = 0)
-    centers=centers[:-1]
 
-    return centers, cid, dist, np.array(wins)
+    return centers
 
 
 def cost(data, cid, centers, z):
@@ -89,19 +80,12 @@ def cost(data, cid, centers, z):
 
 def cost2(data, centers,z):
     dist= distance.cdist(data, np.array(centers))
+    print("Shape:", dist.shape)
     dist = np.amin(dist, axis = 1)
+    print("Shape:", dist.shape)
     s = np.sort(dist)
     s = s[:len(dist) - z- 1]
+    print("Cost:", np.sum(s))
     return np.sum(s)
 
-#dummy data
-from sklearn import cluster, datasets, mixture
-n_samples=100
-noisy_circles = datasets.make_circles(n_samples=n_samples, factor=.5,
-                                      noise=.05)
-
-
-centers, cid, dist0, win = kmeansOutliers(noisy_circles[0], 100, 10, 5)
-costs, index_list = cost(noisy_circles[0], cid, centers, 10)
-#print(costs)
 
