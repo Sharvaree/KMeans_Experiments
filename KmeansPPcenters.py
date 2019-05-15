@@ -8,7 +8,7 @@ import numpy as np
 from scipy.spatial import distance
 
 class KMeanPlusPlus:
-    def __init__(self, num_clusters=3, init=None):
+    def __init__(self, num_clusters, init=None):
         self.num_clusters = num_clusters
         self.centers = np.atleast_2d(init) #in case the file is (n, ) format
         
@@ -49,7 +49,7 @@ class KMeanPlusPlus:
         distances = distances[np.arange(len(distances)), closest_centers]
         
         if mean == True:
-            cost = np.sqrt(np.sum(distances ** 2) / len(X))
+            cost = np.sum(distances ** 2) / len(X)
         else:
             cost = distances.max()
         
