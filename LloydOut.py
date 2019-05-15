@@ -8,9 +8,9 @@ import numpy as np
 from scipy.spatial import distance
 import math
 import random
-import numba
+#import numba
 import time
-from Noise import add_random_noise, compute_phi_star, cost, add_random_noise_th
+from Noise import add_random_noise, compute_phi_star, cost, add_rand_noise_th
 from KMeansOut import kmeansOutliers, cost
 from KmeansPPcenters import KMeanPlusPlus
 
@@ -31,7 +31,7 @@ def  KPP_centers(data, num_clusters):
     return KPP_centers
 
 def LloydOut(data, centers, num_clusters,z, min_value, max_value, tol, itr):
-    data_with_outliers, z_indx = add_random_noise_th(data, z, min_value, max_value)
+    data_with_outliers, z_indx = add_rand_noise_th(data, z, min_value, max_value)
     data_inliers= np.delete(data, z_indx, axis=0)
     
     dist= distance.cdist(data_with_outliers, centers)

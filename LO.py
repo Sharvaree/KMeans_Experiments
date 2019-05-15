@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial import distance
 import math
 import random
-import numba
+#import numba
 import time
 from Noise import add_random_noise, compute_phi_star, cost, add_rand_noise_th
 from KMeansOut import kmeansOutliers, cost
