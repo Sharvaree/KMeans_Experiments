@@ -14,12 +14,10 @@ import math
 import random
 #import numba  #To make it run faster
 import time
-<<<<<<< HEAD
-from Noise import add_random_noise, compute_phi_star, cost, add_rand_noise_th
+
+from Noise import add_random_noise, add_rand_noise_th
 #from KMeansOut import kmeansOutliers, cost
 from KmeansPPcenters import KMeanPlusPlus
-=======
->>>>>>> e559ede898d95b7c1b9d2a1a7fea01e634859d95
 import matplotlib.pyplot as plt
 
 # functions from other .py files.
@@ -83,9 +81,6 @@ def add_noise_SUSY18(data, z, min_value, max_value):
 #Lloyd's algorithm with outliers
 
 def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
-<<<<<<< HEAD
-    #print(centers)
-=======
     '''
     data            Data as numpy array
     centers         Cluster centers as numpy array
@@ -101,17 +96,13 @@ def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
     recall          (Z_prime intersection Z)/Z_prime
     '''
 
->>>>>>> e559ede898d95b7c1b9d2a1a7fea01e634859d95
     dist= distance.cdist(data, centers)
     dist = np.amin(dist, axis = 1)
     X, d= data.shape
     new_centers=np.zeros((num_clusters,d))
     for i in range(itr):
-<<<<<<< HEAD
+
         #print("i:",i)
-=======
-        #print(i)
->>>>>>> e559ede898d95b7c1b9d2a1a7fea01e634859d95
         dist= distance.cdist(data, np.array(centers))
         cid = np.argmin(dist, axis=1)
         dist = np.amin(dist, axis = 1)
@@ -135,39 +126,25 @@ def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
 
         old_centers= centers.copy()
         centers=new_centers.copy()
-<<<<<<< HEAD
+
         #print(centers)
         #input()
-=======
 
->>>>>>> e559ede898d95b7c1b9d2a1a7fea01e634859d95
         isOPTIMAL= True
 
         if(len(np.setdiff1d(new_centers,old_centers))>tol):
             isOPTIMAL= False
-<<<<<<< HEAD
-           
-        if(isOPTIMAL):
-=======
-
 
         if isOPTIMAL:
->>>>>>> e559ede898d95b7c1b9d2a1a7fea01e634859d95
             break
     #Step 10: Compute precision and recall
     precision = len(np.intersect1d(z_indx, indx_list))/len(z_indx)
     recall = len(np.intersect1d(z_indx, indx_list))/len(indx_list)
-<<<<<<< HEAD
     #x1= KPP.predict(data_with_outliers)
         #print(("Precision:{}, recall:{}". format(precision, recall)))
-    print("i",i)
-    print(("Precision:{}, recall:{}". format(precision, recall)))
-    return new_centers, cid, [indx_list, precision, recall]
-=======
+
     print(("Precision:{}, recall:{}". format(precision, recall)))
     return new_centers, cid, indx_list, precision, recall
-
->>>>>>> e559ede898d95b7c1b9d2a1a7fea01e634859d95
 
 def LO_cost(data, cid, centers, z):
     dist= distance.cdist(data, np.array(centers))
