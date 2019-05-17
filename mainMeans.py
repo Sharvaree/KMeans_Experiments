@@ -327,7 +327,7 @@ def computeKMLloydOut(synthD):
 					zind = []
 					for i in range(sd.k,sd.k+sd.z):
 						zind.append(i)
-					ans, cid, wins = lloyd.LloydOut(sd.data, centers, sd.runk, sd.z,1, 100, zind)
+					ans, cid, wins, prec, rec = lloyd.LloydOut(sd.data, centers, sd.runk, sd.z,1, 100, zind)
 					#kmo_cost, index_list = kmo.cost(sd.data, cid, ans, int(sd.z))
 					#average_cost= np.sum(kmo_cost)
 					cost2 = kmo.cost2(sd.data, ans, int(sd.z))
@@ -336,8 +336,8 @@ def computeKMLloydOut(synthD):
 
 					#Computing cost
 					sd.costs.append(cost2)
-					precs.append(wins[1])
-					recs.append(wins[2])
+					precs.append(prec)
+					recs.append(rec)
 
 				sd.precs = precs
 				sd.recs = recs
@@ -562,9 +562,9 @@ def main():
 
 	for i in range(2):#int(len(synthData)/10) - 1):
 		
-		statsLSCoreset = computeKMLSCoreset(synthData[i*10:(i+1)*10])
+		#statsLSCoreset = computeKMLSCoreset(synthData[i*10:(i+1)*10])
 		#statsLS = computeKMLS(synthData[i*10:(i+1)*10])
-		#statsLloyd = computeKMLloydOut(synthData[i*10:(i+1)*10])
+		statsLloyd = computeKMLloydOut(synthData[i*10:(i+1)*10])
 		stats = computeKMoutliers(synthData[i*10:(i+1)*10])
 		
 
