@@ -5,7 +5,7 @@ import random
 #import numba
 import time
 from Noise import add_random_noise, compute_phi_star, cost, add_rand_noise_th
-from KMeansOut import kmeansOutliers, cost
+#from KMeansOut import kmeansOutliers, cost
 from KmeansPPcenters import KMeanPlusPlus
 import matplotlib.pyplot as plt
 
@@ -31,14 +31,13 @@ def add_noise(data, z, min_value, max_value):
     return data_with_outliers, z_indx, data_inliers
 
 def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
-    
-    
+    #print(centers)
     dist= distance.cdist(data, centers)
     dist = np.amin(dist, axis = 1)                
     X, d= data.shape
     new_centers=np.zeros((num_clusters,d))
     for i in range(itr):
-        print(i)
+        #print("i:",i)
         dist= distance.cdist(data, np.array(centers))
         cid = np.argmin(dist, axis=1)
         dist = np.amin(dist, axis = 1)
@@ -60,24 +59,25 @@ def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
         #plt.scatter(new_centers[:,0], new_centers[:,1], marker='o', color= 'black')
 
 
-        old_centers= centers
-        centers=new_centers
-            
+        old_centers= centers.copy()
+        centers=new_centers.copy()
+        #print(centers)
+        #input()
         isOPTIMAL= True
 
-        if (len(np.setdiff1d(new_centers,old_centers)))>tol:
+        if(len(np.setdiff1d(new_centers,old_centers))>tol):
             isOPTIMAL= False
-
            
-        if isOPTIMAL:
+        if(isOPTIMAL):
             break
     #Step 10: Compute precision and recall
     precision = len(np.intersect1d(z_indx, indx_list))/len(z_indx)
     recall = len(np.intersect1d(z_indx, indx_list))/len(indx_list)
     #x1= KPP.predict(data_with_outliers)
         #print(("Precision:{}, recall:{}". format(precision, recall)))
+    print("i",i)
     print(("Precision:{}, recall:{}". format(precision, recall)))
-    return new_centers, cid, indx_list
+    return new_centers, cid, [indx_list, precision, recall]
 
     
 def LO_cost(data, cid, centers, z):

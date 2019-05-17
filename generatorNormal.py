@@ -52,11 +52,20 @@ def generatorNorm(n,d,k,rang,sds,z,num):
     pointset = centers.copy()
 
     for i in range(k):
-        for j in range(s[i]):
+        sumpts = []
+        for j in range(s[i]-1):
             point = []
             for l in range(d):
                 point.append(np.random.normal(centers[i][l],sds[l]))
             pointset.append(point)
+            if(len(sumpts) == 0):
+                sumpts = np.array(point)
+            else:
+                sumpts += np.array(point)
+        avpt = sumpts/(s[i]-1)
+        dif = np.array(pointset[i])- avpt
+        meannegpt = avpt + dif
+        pointset.append(list(meannegpt))
     
     print(len(pointset))
 

@@ -17,6 +17,8 @@ import gonzalez as gon
 import KMeansOut2 as kmo
 import kmeansAux as km
 import localSearch as ls
+import kMeanspp as kmpp
+import LO as lloyd
 
 #Constants
 extraInfo = ["optimal cost","av prec", "max prec", "av recall", "max recall", "prec sd", "recall sd"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
@@ -45,7 +47,7 @@ class synthD:
 	recs = []
 	phistar = 0
 	runz = 1
-	runphi = 0
+	runphi = 1
 	
 
 def mean(ar):
@@ -167,7 +169,7 @@ def addAnswer(stats, sd):
 def compute_phi_star(sd):
 	return kmo.cost2(sd.data[sd.k + sd.z:], sd.data[:sd.k], int(sd.z))
 
-#Compute k means w/ lsout
+#Compute k means w/ lsout with subset
 def computeKMLS(synthD):
 	num = 0
 	stats = []
@@ -186,8 +188,54 @@ def computeKMLS(synthD):
 				precs = []
 				recs = []
 				for i in range(1):
+					sampleData = kmpp.kmeanspp(sd.data,2*(sd.k+sd.z))
 					#Running kcenterOut on the data
-					ans, empz = ls.lsOut(sd.data,sd.runk,sd.z, eps)
+					ans, empz = ls.lsOut(sampleData,sd.runk,sd.z, eps)
+
+					cost2 = kmo.cost2(sd.data, ans, int(sd.z))
+
+					#Computing cost
+					sd.costs.append(cost2)
+
+					prec, rec = kc.kCPrecRecall(sd,ans)
+					precs.append(prec)
+					recs.append(rec)
+
+				sd.precs = precs
+				sd.recs = recs
+
+				#example for adding extra stats, i.e. time. For headers, go to top
+				sd.extrastats = [0,mean(np.array(precs)), max(precs), mean(np.array(recs)), max(recs)]
+
+				printSD(sd)
+		
+				stats = addAnswer(stats, sd)
+				sd.costs = []
+	
+	return stats
+
+#Compute k means w/ lsout
+def computeKMLSCoreset(synthD):
+	num = 0
+	stats = []
+	for f in synthD:
+		#reads data and parses first file in folder
+		sd = readSynthetic(f)
+		sd.phistar = compute_phi_star(sd)
+		print("Iteration:",num)
+		num+=1
+
+		for rp in phistarprop:
+			for j in range(int(sd.k/2)):
+				print("TrueCost:", sd.phistar)
+				sd.runphi = rp
+				sd.runk = sd.k + j
+				precs = []
+				recs = []
+				for i in range(1):
+					#Running kcenterOut on the data
+					#ans, empz = ls.lsOut(sd.data,sd.runk,sd.z, eps)
+					ans, empz = ls.lsOutImproved(sd.data,sd.runk,sd.z, eps)
 
 					cost2 = kmo.cost2(sd.data, ans, int(sd.z))
 
@@ -242,6 +290,54 @@ def computeKMoutliers(synthD):
 					prec, rec = km.kMPrecRecall(sd,wins)
 					precs.append(prec)
 					recs.append(rec)
+
+				sd.precs = precs
+				sd.recs = recs
+
+				#example for adding extra stats, i.e. time. For headers, go to top
+				sd.extrastats = [sd.phistar,mean(np.array(precs)), max(precs), mean(np.array(recs)), max(recs)]
+
+				printSD(sd)
+		
+				stats = addAnswer(stats, sd)
+				sd.costs = []
+	
+	return stats
+
+#Compute thresholded k means w/ outliers
+def computeKMLloydOut(synthD):
+	num = 0
+	stats = []
+	for f in synthD:
+		#reads data and parses first file in folder
+		sd = readSynthetic(f)
+		sd.phistar = compute_phi_star(sd)
+		print("-------------------------\nIteration:",num,"\n-------------------------")
+		num+=1
+
+		for rp in phistarprop:
+			for j in range(5):#int(sd.k)):
+				sd.runphi = rp
+				sd.runk = sd.k + j
+				precs = []
+				recs = []
+				for i in range(3):
+					#Running Lloyds
+					centers =  kmpp.kmeanspp(sd.data, sd.runk)
+					zind = []
+					for i in range(sd.k,sd.k+sd.z):
+						zind.append(i)
+					ans, cid, wins = lloyd.LloydOut(sd.data, centers, sd.runk, sd.z,1, 100, zind)
+					#kmo_cost, index_list = kmo.cost(sd.data, cid, ans, int(sd.z))
+					#average_cost= np.sum(kmo_cost)
+					cost2 = kmo.cost2(sd.data, ans, int(sd.z))
+					#print("Sharvaree_cost:", average_cost)
+					#assert(cost2 == average_cost)
+
+					#Computing cost
+					sd.costs.append(cost2)
+					precs.append(wins[1])
+					recs.append(wins[2])
 
 				sd.precs = precs
 				sd.recs = recs
@@ -329,104 +425,6 @@ def processStats(stats):
 	newStats = np.array(newStats)
 	return newStats
 
-def plotNewStats(stats):
-	ks = stats[:,6]
-	avprec = stats[:, 17]
-	maxprec = stats[:, 18]
-	avrec = stats[:,19]
-	maxrec = stats[:,20]
-
-	plotpts = np.array([avprec, maxprec, avrec, maxrec])
-	
-	#adding title
-	plt.title("Stats of [n: " + str(stats[0][0]) + ", d: " + str(stats[0][1]) + ", k: " + str(stats[0][2]) + ", rang: " + str(int(float(stats[0][3]))) + ", z: " + str(stats[0][4]) + ", sigma: " + str(stats[0][6]) + "]")
-	name = "km_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][6]) + "z" + str(int(stats[0][7])) + "p" + str(int(stats[0][8])) + ".png"
-
-	print(plotpts)
-	plt.xlabel("k")
-	plt.ylabel("Precision/Recall")
-	plt.scatter(ks, avprec)
-	plt.plot(ks, avprec, label = "Average Precision")
-	plt.scatter(ks, maxprec)
-	plt.plot(ks, maxprec, label = "Max Precision")
-	plt.scatter(ks, avrec)
-	plt.plot(ks, avrec, label = "Average Recall")
-	plt.scatter(ks, maxrec)
-	plt.plot(ks, maxrec, label = "Max Recall")
-	plt.legend(loc='best')
-	plt.savefig("visualizations/" + name)
-	plt.clf()
-
-def plot2(stats,stats2):
-
-	ks = stats[:, 6]
-	avprec = stats[:, 20]
-	maxprec = stats[:, 21]
-	avrec = stats[:,22]
-	maxrec = stats[:,23]
-	sdprec = stats[:,24]
-	sdrec = stats[:,25]
-
-	plotpts = np.array([avprec, maxprec, avrec, maxrec])	
-
-	print(plotpts)
-	
-	ks2 = stats2[:,6]
-	avprec2 = stats2[:, 20]
-	maxprec2 = stats2[:, 21]
-	avrec2 = stats2[:,22]
-	maxrec2 = stats2[:,23]
-	sdprec2 = stats2[:,24]
-	sdrec2 = stats2[:,25]
-
-	plotpts2 = np.array([avprec2, maxprec2, avrec2, maxrec2])
-	print(plotpts2)
-
-	#Start with center outliers
-	
-	plt.figure(figsize=(6.4,9.6))
-	plt.suptitle("Figure   n=" + str(int(stats[0][0])) + ", d=" + str(int(stats[0][1])) + ", k=" + str(int(stats[0][2])) + ", rang=" + str(int(float(stats[0][3]))) + ", z=" + str(int(stats[0][4])) + ", sigma=" + str(int(stats[0][6]))+", phifactor=" + str(int(stats[0][7])) + ".")
-
-	plt.subplot(211)
-	plt.title("Precision")
-
-	plt.xlabel("k")
-	plt.ylabel("Precision")
-	ax = plt.gca()
-	ax.set_ylim([0,1])
-	plt.errorbar(ks, avprec, yerr=sdprec)
-	plt.plot(ks, avprec, linestyle = '-', label = "Mean Precision Algorithm 1")
-	#plt.scatter(ks, maxprec)
-	#plt.plot(ks, maxprec,linestyle = '--', label = "Max Precision Algorithm 1")
-	plt.scatter(ks, avprec2)
-	plt.plot(ks, avprec2,linestyle = '-.', label = "Mean Precision Gonzalez")
-	#plt.scatter(ks, maxprec2)
-	#plt.plot(ks, maxprec2,linestyle = ':', label = "Max Precision Gonzalez")
-	plt.legend(loc='best')
-	plt.tight_layout(rect = [0,0.03,1,0.95])
-
-	plt.subplot(212)
-	plt.title("Recall")
-
-	plt.xlabel("k")
-	plt.ylabel("Recall")
-	ax = plt.gca()
-	ax.set_ylim([0,1])
-	plt.errorbar(ks, avrec, yerr = sdrec)
-	plt.plot(ks, avrec,linestyle = '-', label = "Mean Recall Algorithm 1")
-	#plt.scatter(ks, maxrec)
-	#plt.plot(ks, maxrec,linestyle = '--', label = "Max Recall Algorithm 1")
-	plt.scatter(ks, avrec2)
-	plt.plot(ks, avrec2,linestyle = '-.', label = "Mean Recall Gonzalez")
-	#plt.scatter(ks, maxrec2)
-	#plt.plot(ks, maxrec2,linestyle = ':', label = "Max Recall Gonzalez")
-	plt.legend(loc='best')
-	plt.tight_layout(rect = [0,0.03,1,0.95])
-	
-	name = "km_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][6])+ "p" + str(int(stats[0][7])) + ".png"
-	plt.savefig("visualizations/" + name)
-	plt.clf()
-
 def collapseAndAverageOver(k, precrec):
 	uniquek = list(set(k))
 	grouped = [0.0]*len(uniquek)
@@ -475,7 +473,7 @@ def plot2averagedK(stats,stats2):
 	#Start with center outliers
 	
 	plt.figure(figsize=(6.4,9.6))
-	plt.suptitle("Figure n=" + str(int(stats[0][0])) + ", d=" + str(int(stats[0][1])) + ", k=" + str(int(stats[0][2])) + ", rang=" + str(int(float(stats[0][3]))) + ", z=" + str(int(stats[0][4])) + ", sigma=" + str(int(stats[0][6]))+", phifactor=" + str(int(stats[0][7])) + ".")
+	plt.suptitle("Figure n=" + str(int(stats[0][0])) + ", d=" + str(int(stats[0][1])) + ", k=" + str(int(stats[0][2])) + ", rang=" + str(int(float(stats[0][3]))) + ", z=" + str(int(stats[0][4])) + ", sigma=" + str(int(stats[0][5]))+", phifactor=" + str(int(stats[0][7])) + ".")
 
 	plt.subplot(211)
 	plt.title("Precision")
@@ -513,7 +511,7 @@ def plot2averagedK(stats,stats2):
 	plt.legend(loc='best')
 	plt.tight_layout(rect = [0,0.03,1,0.95])
 	
-	name = "km_avK_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][6])+ "p" + str(int(stats[0][7])) + ".png"
+	name = "km_avK_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5])+ "p" + str(int(stats[0][7])) + ".png"
 	plt.savefig("visualizations/" + name)
 	plt.clf()
 
@@ -560,12 +558,18 @@ def main():
 
 	#Computing sds Note: can run stats = computeKCoutliers(synthData[:nums]) so it only runs the first nums files. Good for testing
 	writeStats = []
-	writeStatsGon = []
+	writeStatsLS = []
+
 	for i in range(2):#int(len(synthData)/10) - 1):
-		statsLS = computeKMLS(synthData[i*10:(i+1)*10])
+		
+		statsLSCoreset = computeKMLSCoreset(synthData[i*10:(i+1)*10])
+		#statsLS = computeKMLS(synthData[i*10:(i+1)*10])
+		#statsLloyd = computeKMLloydOut(synthData[i*10:(i+1)*10])
 		stats = computeKMoutliers(synthData[i*10:(i+1)*10])
+		
+
 		writeStats.extend(stats)
-		writeStatsGon.extend(statsGon)
+		writeStatsLS.extend(statsLS)
 
 		boxPlot(stats)
 

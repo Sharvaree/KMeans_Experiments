@@ -3,8 +3,30 @@ from scipy.spatial import distance
 import math
 import random
 	
+def outliers(data, centers,z):
+    dist= distance.cdist(data, np.array(centers))
+    dist = np.amin(dist, axis = 1)
+    s = np.argsort(dist)
+    return s[len(dist) - z:]
 	
 def kMPrecRecall(sd, wins):
+	tp = 0
+
+	outInd = outliers(sd.data, sd.data[wins], sd.z)
+	
+	for i in range(sd.k, sd.k+sd.z):
+		for ind in outInd:
+			if(ind == i):
+				tp += 1
+
+	prec = tp/sd.z
+	recall = tp/sd.z
+
+	print(prec, recall)
+
+	return prec, recall
+			
+def kMPrecRecall2(sd, wins):
 	hit = np.zeros(sd.k)
 	tp = 0
 	fp = 0
@@ -38,4 +60,3 @@ def kMPrecRecall(sd, wins):
 	print(prec, recall)
 
 	return prec, recall
-			
