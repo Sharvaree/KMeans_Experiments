@@ -168,9 +168,9 @@ def lsOut(u,k,z, eps):
 	alpha = float("inf")
 
 	curcost = cost2(uNoOut, c,0)
-	i=0
+	count = 0
 	while(alpha*(1-(eps/k)) > curcost):
-		print("		LSOut:it",i)
+		print("		LSOut:it",count)
 		alpha = curcost
 
 		#(i)
@@ -187,12 +187,11 @@ def lsOut(u,k,z, eps):
 		if(curcost*(1-(eps/k)) > cost2(uNoOut2, c,0)):
 			improvedZ = np.append(improvedZ, zsInd2)
 
-		
 		#(iii)
 		cpps = cost_per_pt_w_centers_eliminated(u, improvedC) #cost per point with each center eliminated(k x n)
 		uNoOut3 = np.delete(u,improvedZ, axis=0)
 		bestCost = cost2(uNoOut3,improvedC,0)
-		count = 0
+		
 		for i in range(len(u)):
 			tempu = u[i]
 			cpppp = (cost_per_pt(u, [tempu]))#cost per point of picking only tempu as center(n)
@@ -209,14 +208,15 @@ def lsOut(u,k,z, eps):
 					improvedZ = list(set(zsInd).union(set(new_out_ind)))
 					bestCost = newCost
 					cpps = cost_per_pt_w_centers_eliminated(u, improvedC) 
-			count+=1
+			
 
 		#Last step
 		if(curcost*(1-(eps/k)) > bestCost):
 			c = improvedC
 			zsInd = improvedZ
+			uNoOut = np.delete(u,zsInd, axis=0)
 			curcost = cost2(uNoOut, c,0)
-		i+=1
+		count+=1
 
 	return c, len(zsInd)
 
@@ -321,7 +321,9 @@ def lsImproved(u,w, c, k, eps):
 			for j in range(len(improvedC)):
 				#amin finds the elementwise minimum over [cost per point with jth center eliminated] and [cost of picking point]
 				#sum adds these points
-				newCost = sum(np.amin([cpps[j], cpppp], axis=0))
+				uvcosts = np.amin([cpps[j], cpppp], axis=0)
+				#uvcosts = rowMult(uvcosts, w)
+				newCost = sum(uvcosts)
 
 				if(newCost< bestCost):
 					print("			BestCost", bestCost, "newCost", newCost)
@@ -335,8 +337,8 @@ def lsImproved(u,w, c, k, eps):
 	
 	return c
 
-def lsOutImproved(u,k,z, eps):
-	u, w = kmeanspp(u,2*(k+z))
+def lsOutImproved(u,k,z, eps, coresetSize):
+	u, w = kmeanspp(u,coresetSize)
 	c = kmpp.kmeanspp(u,k)
 	#c = randomInit(u,k)
 	zsInd = outliersim(u, c, z,w)
@@ -344,9 +346,9 @@ def lsOutImproved(u,k,z, eps):
 	alpha = float("inf")
 
 	curcost = cost2im(uNoOut, c,0,w)
-	i=0
+	count = 0
 	while(alpha*(1-(eps/k)) > curcost):
-		print("		LSOut:it",i)
+		print("		LSOut:it",count)
 		alpha = curcost
 
 		#(i)
@@ -368,7 +370,7 @@ def lsOutImproved(u,k,z, eps):
 		cpps = cost_per_pt_w_centers_eliminatedim(u, improvedC,w) #cost per point with each center eliminated(k x n)
 		uNoOut3 = np.delete(u,improvedZ, axis=0)
 		bestCost = cost2im(uNoOut3,improvedC,0,w)
-		count = 0
+		
 		for i in range(len(u)):
 			tempu = u[i]
 			cpppp = (cost_per_ptim(u, [tempu],w))#cost per point of picking only tempu as center(n)
@@ -376,6 +378,7 @@ def lsOutImproved(u,k,z, eps):
 				uvcosts = np.amin([cpps[j], cpppp], axis=0)
 				uvcosts, new_out_ind = zero_out_outliers(uvcosts,z)
 				uvcosts = zero_out_ind(uvcosts, zsInd)
+				#uvcosts = rowMult(uvcosts, w)
 
 				newCost = sum(uvcosts)
 				
@@ -385,14 +388,15 @@ def lsOutImproved(u,k,z, eps):
 					improvedZ = list(set(zsInd).union(set(new_out_ind)))
 					bestCost = newCost
 					cpps = cost_per_pt_w_centers_eliminatedim(u, improvedC,w)
-			count+=1
+			
 
 		#Last step
 		if(curcost*(1-(eps/k)) > bestCost):
 			c = improvedC
 			zsInd = improvedZ
+			uNoOut = np.delete(u,zsInd, axis=0)
 			curcost = cost2im(uNoOut, c,0,w)
-		i+=1
+		count+=1
 
 	return c, len(zsInd)
 
