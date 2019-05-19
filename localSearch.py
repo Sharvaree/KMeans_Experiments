@@ -226,7 +226,8 @@ def lsOut(u,k,z, eps):
 
 def rowMult(m, v):
 	for i in range(len(m)):
-		m[i] = m[i]*v[i]
+		for j in range(len(m[0])):
+			m[i][j] = m[i][j] * v[i]
 	return m
 
 def cost2im(data, centers,z,w):

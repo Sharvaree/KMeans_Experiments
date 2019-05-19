@@ -284,8 +284,8 @@ def computeKMLSCoreset(synthD):
 				#Running kcenterOut on the data
 				numpts = 2*(sd.k+sd.z)
 				numpts = int(sd.n/10)
-				numpts = sd.k + sd.z
-				ans, empz = ls.lsOutImproved(sd.data,sd.runk,sd.z, eps,int(sd.n/10))
+				#numpts = sd.k + sd.z
+				ans, empz = ls.lsOutImproved(sd.data,sd.runk,sd.z, eps,numpts)
 				
 
 				cost2 = kmo.cost2(sd.data, ans, int(sd.z))
