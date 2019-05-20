@@ -22,8 +22,8 @@ print("data loaded")
 skin_labels= read_data[:,3]
 skin_data=read_data[:,0:3]
 
-num_clusters=[10, 20]
-zs =[25, 50, 100]
+num_clusters=[10]
+zs =[25]
 min_value= 210
 max_value=255
 #min_values=[-16, 0, 7.693475e-08]
@@ -33,18 +33,31 @@ itr=1000
 
 data= skin_data
 #data_with_outliers=skin_data
-
+iterations=100
 
 for num_cluster in num_clusters:
     for z in zs:
         print("num_cluster:{}, z:{}".format(num_cluster, z))
-        data_with_outliers, z_indx, data_inliers = add_noise(data, z, min_value, max_value)
-        kpp_centers = KPP_centers(data_with_outliers, num_cluster)
-        centers, cid, indx_list, precision, recall=LloydOut(data_with_outliers, kpp_centers, num_cluster, z, tol, itr, z_indx )
+		
+		KMO_LO_prec=[]
+		KPP_LO_prec=[]
+		R_LO_prec=[]
 
-        rand_centers= random_centers(data_with_outliers, num_cluster)
-        centers, cid, indx_list, precision, recall= LloydOut(data_with_outliers, rand_centers, num_cluster, z, tol, itr, z_indx)
+		for iteration in iterations:
+			print(iteration)
+        	data_with_outliers, z_indx, data_inliers = add_noise(data, z, min_value, max_value)
+        	kpp_centers = KPP_centers(data_with_outliers, num_cluster)
+        	centers, cid, indx_list, precision, recall, data_out =LloydOut(data_with_outliers, kpp_centers, num_cluster, z, tol, itr, z_indx )
+			KPP_LO_prec.append(precision)
 
-        phi_star= compute_phi_star(data, num_cluster, kpp_centers, z)
-        kmo_centers= KMO_centers(data_with_outliers, num_cluster, 10000*phi_star, z)
-        centers, cid, indx_list, precision, recall= LloydOut(data_with_outliers, kmo_centers, num_cluster, z, tol, itr, z_indx)
+        	rand_centers= random_centers(data_with_outliers, num_cluster)
+        	centers, cid, indx_list, precision, recall, data_out= LloydOut(data_with_outliers, rand_centers, num_cluster, z, tol, itr, z_indx)
+			R_LO_prec.append(precision)
+
+        	phi_star= compute_phi_star(data, num_cluster, kpp_centers, z)
+        	kmo_centers= KMO_centers(data_with_outliers, num_cluster, phi_star, z)
+        	centers, cid, indx_list, precision, recall, data_out= LloydOut(data_with_outliers, kmo_centers, num_cluster, z, tol, itr, z_indx)
+			KMO_LO_prec.append(precision)
+		print("KPP:{}".format(KPP_LO_prec))
+		print("Random:{}".format(R_LO_prec))
+		print("KMO:{}".format(KMO_LO_prec))

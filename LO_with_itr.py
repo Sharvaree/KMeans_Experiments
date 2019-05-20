@@ -139,7 +139,7 @@ def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
     precision = len(np.intersect1d(z_indx, indx_list))/len(z_indx)
     recall = len(np.intersect1d(z_indx, indx_list))/len(indx_list)
     #print(("Precision:{}, recall:{}, itr:{}". format(precision, recall, i)))
-    return new_centers, cid, indx_list, precision, recall, data_copy
+    return new_centers, cid, indx_list, precision, recall, data_copy, i
 
 
 def LO_cost(data, cid, centers, z):
