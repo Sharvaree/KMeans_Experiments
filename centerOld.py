@@ -14,7 +14,6 @@ import kcenterAux as kc
 import generatorNormalCenters as gnc
 import gonzalez as gon
 import KMeansOut2 as kmo
-import localSearch as ls
 
 #Constants
 extraInfo = ["av prec", "max prec", "av recall", "max recall", "prec sd", "recall sd"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
@@ -70,10 +69,10 @@ def createSynthDataGKL():
 #for k-Means with Outliers" 
 def createSynthDataGKLCenters():
 	files = []
-	sds = [5]
-	ks = [20]
-	zs = [100]
-	ds = [15]
+	sds = [1, 5, 10]
+	ks = [10, 20]
+	zs = [25,50,100]
+	ds = [2,15]
 	for sd in sds:
 		for k in ks:
 			for z in zs:
@@ -153,6 +152,7 @@ def addAnswer(stats, sd):
 		temp.append([sd.recs])
 		stats.append(temp)
 	return stats
+		
 
 #Compute k centers w/ gonzalez
 def computeKC(synthD):
@@ -164,7 +164,7 @@ def computeKC(synthD):
 		print("Iteration:",num)
 		num+=1
 
-		for j in range(int(sd.k*2)):
+		for j in range(int(sd.k/2)):
 			sd.runk = sd.k + j
 			precs = []
 			recs = []
@@ -203,7 +203,7 @@ def computeKCoutliers(synthD):
 		print("Iteration:",num)
 		num+=1
 
-		for j in range(int(sd.k*2)):
+		for j in range(int(sd.k/2)):
 			sd.runk = sd.k + j
 			precs = []
 			recs = []
@@ -211,44 +211,6 @@ def computeKCoutliers(synthD):
 				#Running kcenterOut on the data
 				kcent = kco.kcentersOut(sd.data,sd.runk,sd.s)
 				ans= kcent.kcentersOut()
-
-				#Computing cost
-				sd.costs.append(kc.kCCost(sd.data, ans, sd.s))
-
-				prec, rec = kc.kCPrecRecall(sd,ans)
-				precs.append(prec)
-				recs.append(rec)
-
-			sd.precs = precs
-			sd.recs = recs
-
-			#example for adding extra stats, i.e. time. For headers, go to top
-			sd.extrastats = [mean(np.array(precs)), max(precs), mean(np.array(recs)), max(recs)]
-
-			printSD(sd)
-			
-			stats = addAnswer(stats, sd)
-			sd.costs = []
-	
-	return stats
-
-#Compute k centers w/ random centers
-def computeKCRandom(synthD):
-	num = 0
-	stats = []
-	for f in synthD:
-		#reads data and parses first file in folder
-		sd = readSynthetic(f)
-		print("Iteration:",num)
-		num+=1
-
-		for j in range(int(sd.k*2)):
-			sd.runk = sd.k + j
-			precs = []
-			recs = []
-			for i in range(5):
-				#Running kcenterOut on the data
-				ans= ls.randomInit(sd.data, sd.runk)
 
 				#Computing cost
 				sd.costs.append(kc.kCCost(sd.data, ans, sd.s))
@@ -441,60 +403,6 @@ def plotGonOut(stats,stats2):
 	plt.savefig("visualizations/" + name)
 	plt.clf()
 
-def plotGonOutRand(stats,stats2,stats3):
-	ks = stats[:, 6]
-	avprec = stats[:, 18]
-	maxprec = stats[:, 19]
-	avrec = stats[:,20]
-	maxrec = stats[:,21]
-	sdprec = stats[:,22]
-	sdrec = stats[:,23]
-
-	ks = stats2[:,6]
-	avprec2 = stats2[:, 18]
-	maxprec2 = stats2[:, 19]
-	avrec2 = stats2[:,20]
-	maxrec2 = stats2[:,21]
-	sdprec2 = stats2[:,22]
-	sdrec2 = stats2[:,23]
-
-	ks = stats3[:,6]
-	avprec3 = stats3[:, 18]
-	maxprec3 = stats3[:, 19]
-	avrec3 = stats3[:,20]
-	maxrec3 = stats3[:,21]
-	sdprec3 = stats3[:,22]
-	sdrec3 = stats3[:,23]
-
-
-	plotpts = np.array([avprec, maxprec, avrec, maxrec])
-
-	#Start with center outliers
-	
-	plt.figure(figsize=(6.4,4.8))
-	plt.title("Mean Recall")
-
-	plt.xlabel("k")
-	plt.ylabel("Center Recall")
-	ax = plt.gca()
-	ax.set_ylim([0,1])
-	plt.errorbar(ks, avrec, yerr = sdrec, fmt='o',capsize=2, capthick=1, color = "red")
-	plt.plot(ks, avrec,linestyle = '-', label = "k-center-adaptive-sampling", color = "red")
-	#plt.scatter(ks, maxrec)
-	#plt.plot(ks, maxrec,linestyle = '--', label = "Max Recall Algorithm 1")
-	plt.scatter(ks, avrec2, color = "blue")
-	plt.plot(ks, avrec2,linestyle = '-.', label = "Gonzalez", color = "blue")
-	#plt.scatter(ks, maxrec2)
-	#plt.plot(ks, maxrec2,linestyle = ':', label = "Max Recall Gonzalez")
-	plt.errorbar(ks, avrec3, yerr = sdrec, fmt='o',capsize=2, capthick=1, color = "g")
-	plt.plot(ks, avrec3,linestyle = '-', label = "random-sampling", color = "g")
-	plt.legend(loc='best')
-	plt.tight_layout(rect = [0,0.03,1,0.95])
-	
-	name = "kc_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".png"
-	plt.savefig("visualizations/" + name)
-	plt.clf()
-
 def combine(y):
 	for i in range(len(y)):
 		y[i] = np.mean(y[i], axis=0)
@@ -539,29 +447,24 @@ def main():
 	#Computing sds Note: can run stats = computeKCoutliers(synthData[:nums]) so it only runs the first nums files. Good for testing
 	writeStats = []
 	writeStatsGon = []
-	writeStatsRand = []
-	for i in range(1):#int(len(synthData)/10) - 1):
-		statsRand = computeKCRandom(synthData[i*10:(i+1)*10])
+	for i in range(int(len(synthData)/10) - 1):
 		statsGon = computeKC(synthData[i*10:(i+1)*10])
 		stats = computeKCoutliers(synthData[i*10:(i+1)*10])
 		writeStats.extend(stats)
 		writeStatsGon.extend(statsGon)
-		writeStatsRand.extend(statsRand)
+
+		boxPlot(stats)
 
 		#Ploting and writing plots
-		newStatsRand = processStats(statsRand)
 		newStats = processStats(stats)
 		newStatsGon = processStats(statsGon)
-		plotGonOutRand(newStats,newStatsGon, newStatsRand)
+		plotGonOut(newStats,newStatsGon)
 
 	#Writing stats kcout
 	writeKCOStats(writeStats,"center.csv")
 
 	#Writing stats gonzalez
 	writeKCOStats(writeStatsGon, "gonzalez.csv")
-
-	#Writing stats random
-	writeKCOStats(writeStatsRand, "random.csv")
 	
 ############################################################################################
 

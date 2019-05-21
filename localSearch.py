@@ -226,8 +226,7 @@ def lsOut(u,k,z, eps):
 
 def rowMult(m, v):
 	for i in range(len(m)):
-		for j in range(len(m[0])):
-			m[i][j] = m[i][j] * v[i]
+		m[i] = m[i]*v[i]
 	return m
 
 def cost2im(data, centers,z,w):
@@ -239,7 +238,7 @@ def cost2im(data, centers,z,w):
 	return np.sum(s)
 
 def cost_per_ptim(data, centers,w):
-	dist= distance.cdist(data, np.array(centers))
+	dist = distance.cdist(data, np.array(centers))
 	dist = rowMult(dist,w)
 	dist = np.amin(dist, axis = 1)
 	return dist
@@ -300,7 +299,7 @@ def kmeanspp(data,num_clusters):
     wsum = sum(weights)
     weights = np.array(weights)
 
-    return centers, weights
+    return centers, weights, wins
 
 def lsImproved(u,w, c, k, eps):
 	alpha = float("inf")
@@ -316,7 +315,7 @@ def lsImproved(u,w, c, k, eps):
 		cpps = cost_per_pt_w_centers_eliminatedim(u, improvedC,w) #cost per point with each center eliminated(k x n)
 
 		for i in range(len(u)):
-			tempu = u[i]
+			tempu = u[i].copy()
 			cpppp = (cost_per_ptim(u, [tempu],w))#cost per point of picking only tempu as center(n)
 			
 			for j in range(len(improvedC)):
@@ -329,7 +328,7 @@ def lsImproved(u,w, c, k, eps):
 				if(newCost< bestCost):
 					print("			BestCost", bestCost, "newCost", newCost)
 					bestCost = newCost
-					improvedC[j] = tempu
+					improvedC[j] = tempu.copy()
 					cpps = cost_per_pt_w_centers_eliminatedim(u, improvedC,w)
 
 		c = improvedC
@@ -338,9 +337,16 @@ def lsImproved(u,w, c, k, eps):
 	
 	return c
 
+def convert(inds, wins):
+	inds2 = []
+	for i in range(len(inds)):
+		inds2.append(wins[inds[i]])
+	return inds2
+
 def lsOutImproved(u,k,z, eps, coresetSize):
-	u, w = kmeanspp(u,coresetSize)
-	c = kmpp.kmeanspp(u,k)
+	u2 = u.copy()
+	u, w, wins = kmeanspp(u,coresetSize)
+	c, nothing, inds = kmeanspp(u,k)
 	#c = randomInit(u,k)
 	zsInd = outliersim(u, c, z,w)
 	uNoOut = np.delete(u,zsInd, axis=0)
@@ -373,7 +379,7 @@ def lsOutImproved(u,k,z, eps, coresetSize):
 		bestCost = cost2im(uNoOut3,improvedC,0,w)
 		
 		for i in range(len(u)):
-			tempu = u[i]
+			tempu = u[i].copy()
 			cpppp = (cost_per_ptim(u, [tempu],w))#cost per point of picking only tempu as center(n)
 			for j in range(len(improvedC)):
 				uvcosts = np.amin([cpps[j], cpppp], axis=0)
@@ -384,8 +390,9 @@ def lsOutImproved(u,k,z, eps, coresetSize):
 				newCost = sum(uvcosts)
 				
 				if(newCost < bestCost):
-					print("		BestCost", bestCost, "newCost", newCost)
-					improvedC[j] = tempu
+					improvedC[j] = tempu.copy()
+					inds[j] = i
+					print("		BestCost", bestCost, "newCost", newCost, "point", wins[i], "in index", j , "inds", convert(inds,wins))
 					improvedZ = list(set(zsInd).union(set(new_out_ind)))
 					bestCost = newCost
 					cpps = cost_per_pt_w_centers_eliminatedim(u, improvedC,w)
@@ -399,8 +406,108 @@ def lsOutImproved(u,k,z, eps, coresetSize):
 			curcost = cost2im(uNoOut, c,0,w)
 		count+=1
 
+	inds = convert(inds,wins)
+
+	print("wins", wins)
+	print("inds", inds)
+
 	return c, len(zsInd)
 
+########################################################
+#Raw LS: With coreset implementation
+########################################################
+def lsCor(u,w, c, k, eps):
+	alpha = float("inf")
 	
+	curcost = cost2im(u, c,0,w)
+	count=0
+	while(alpha*(1-(eps/k)) > curcost):
+		print("			LS:it",count)
+		alpha = curcost
+		
+		improvedC = c.copy()
+		bestCost = cost2im(u,improvedC,0,w) #current best cost
+		for i in range(len(u)):
+			for j in range(len(improvedC)):
+				temp = improvedC[j].copy()
+				improvedC[j] = u[i].copy()
+				newCost = cost2im(u,improvedC,0,w)
+
+				if(newCost< bestCost):
+					print("			BestCost", bestCost, "newCost", newCost)
+					bestCost = newCost
+				else:
+					improvedC[j] = temp
+
+		c = improvedC
+		curcost = cost2im(u, c,0,w)
+		count+=1
+	
+	return c
+
+def lsOutCor(u,k,z, eps, coresetSize):
+	u2 = u.copy()
+	u, w, wins = kmeanspp(u,coresetSize)
+	c, nothing, inds = kmeanspp(u,k)
+	#c = randomInit(u,k)
+	zsInd = outliersim(u, c, z,w)
+	uNoOut = np.delete(u,zsInd, axis=0)
+	alpha = float("inf")
+
+	curcost = cost2im(uNoOut, c,0,w)
+	count = 0
+	while(alpha*(1-(eps/k)) > curcost):
+		print("		LSOut:it",count)
+		alpha = curcost
+
+		#(i)
+		uNoOut = np.delete(u,zsInd, axis=0)
+		c = lsCor(uNoOut, w, c, k,eps)
+		curcost = cost2im(uNoOut, c,0,w)
+
+		improvedC = c.copy()
+		improvedZ = zsInd.copy()
+
+		#(ii)
+		zsInd2 = outliersim(uNoOut, c, z,w)
+		uNoOut2 = np.delete(uNoOut,zsInd2, axis=0)
+		if(curcost*(1-(eps/k)) > cost2im(uNoOut2, c,0,w)):
+			improvedZ = np.append(improvedZ, zsInd2)
+
+		
+		#(iii)
+		uNoOut3 = np.delete(u,improvedZ, axis=0)
+		bestCost = cost2im(uNoOut3,improvedC,0,w)
+		
+		for i in range(len(u)):
+			for j in range(len(improvedC)):
+				temp = improvedC[j].copy()
+				improvedC[j] = u[i].copy()
+				new_out_ind = outliersim(u,improvedC,z,w)
+				newCost = cost2im(uNoOut3,improvedC,0,w)
+				
+				if(newCost < bestCost):
+					improvedZ = list(set(zsInd).union(set(new_out_ind)))
+					uNoOut3 = np.delete(u,improvedZ, axis=0)
+					inds[j] = i
+					print("		BestCost", bestCost, "newCost", newCost, "point", wins[i], "in index", j , "inds", convert(inds,wins))
+					bestCost = newCost
+				else:
+					improvedC[j] = temp
+
+		#Last step
+		if(curcost*(1-(eps/k)) > bestCost):
+			c = improvedC
+			zsInd = improvedZ
+			uNoOut = np.delete(u,zsInd, axis=0)
+			curcost = cost2im(uNoOut, c,0,w)
+		count+=1
+
+	inds = convert(inds,wins)
+
+	#print("wins", wins)
+	#print("inds", inds)
+
+	return c, len(zsInd)
 
 
