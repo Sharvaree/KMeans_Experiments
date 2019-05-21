@@ -38,13 +38,20 @@ min_value=-0.403
 max_value=.629
 #min_value= np.min(np.amin(data, axis=1), axis=0)
 #max_value=np.max(np.amax(data, axis=1), axis=0)
-num_clusters=[10]
-betas= [.5, .6,  .7, .9, 1, 2]
-tol= .05
-itr=100
-z= 500 #approx 5%
 
+num_clusters=[10, 15, 20, 25, 30]
+betas= [.5, .6,  .7, .9, 1, 2]
+
+#Approx 5% of te dataset
+z=500
+tol= .05
+#Number of Lloyds iterations
+itr=100
+
+#Number of experiments
 iterations=5
+
+#number of runs for a fixed dataset
 runs=10
 for num_cluster in num_clusters:
     for beta in betas:
@@ -87,15 +94,16 @@ for num_cluster in num_clusters:
                 #print("KMO")
                 phi_star= compute_phi_star(data, num_cluster, kpp_centers, z)
                 kmo_centers= KMO_centers(data_with_outliers, num_cluster, beta*phi_star, z)
-                print("PHI-star:{}".format(beta*phi_star))
+                #print("PHI-star:{}".format(beta*phi_star))
                 centers, cid, indx_list, KMO_precision, recall, data_out, KMO_itr= LloydOut(data_with_outliers, kmo_centers, num_cluster, z, tol, itr, z_indx)
                 KMO_cost= LO_cost2(data_with_outliers, centers, z)
                 KMO_LO_prec_runs.append(KMO_precision)
                 KMO_LO_cost_runs.append(KMO_cost)
                 KMO_LO_itr_runs.append(KMO_itr)
-            print("runs:{},KPP:{}, cost:{}, itr: {}".format(j, np.mean(np.array(KPP_LO_prec_runs)), np.mean(np.array(KPP_LO_cost_runs)), np.mean(np.array(KPP_LO_itr_runs))))
+            print("PHI-star:{}".format(beta*phi_star))
+            print("runs:{},KPP:{}, cost:{}, itr: {}".format(j+1, np.mean(np.array(KPP_LO_prec_runs)), np.mean(np.array(KPP_LO_cost_runs)), np.mean(np.array(KPP_LO_itr_runs))))
             #print("Random:{}, cost:{}, itr:{}".format(np.mean(np.array(R_LO_prec)),np.mean(np.array(R_LO_cost))))
-            print("runs:{}, KMO:{},cost:{}, itr:{}".format(j, np.mean(np.array(KMO_LO_prec_runs)), np.mean(np.array(KMO_LO_cost_runs)), np.mean(np.array(KMO_LO_itr_runs))))
+            print("runs:{}, KMO:{},cost:{}, itr:{}".format(j+1, np.mean(np.array(KMO_LO_prec_runs)), np.mean(np.array(KMO_LO_cost_runs)), np.mean(np.array(KMO_LO_itr_runs))))
             KPP_LO_prec.append(np.mean(np.array(KPP_LO_prec_runs)))
             KPP_LO_cost.append(np.mean(np.array(KPP_LO_cost_runs)))
             KPP_LO_itr.append(np.mean(np.array(KPP_LO_itr_runs)))

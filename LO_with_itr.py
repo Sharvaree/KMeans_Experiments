@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 # functions from other .py files.
 #Add the path of the files if they are not in the same directory
 
-from Noise import add_random_noise, add_rand_noise_th, add_rand_noise_SUSY8, add_rand_noise_SUSY10, add_rand_noise_SUSY18, add_rand_noise_general
+from Noise import add_random_noise, add_rand_noise_th, add_rand_noise_SUSY18, add_rand_noise_general
 from KMeansOut import kmeansOutliers, cost, compute_phi_star
 from KmeansPPcenters import KMeanPlusPlus
 
@@ -157,9 +157,9 @@ def LO_cost2(data, centers, z):
 	return np.sum(s)
 
 def LO_cost3(data, centers, z):
-	dist=distance.cdist(data, np.array(centers))
-	dist=np.amin(dist, axis=1)
+    dist=distance.cdist(data, np.array(centers))
+    dist=np.amin(dist, axis=1)
     indx_list = np.argpartition(dist, -z)[-z:]
-	s=np.sort(dist)
-	s=s[:len(dist)-z-1]
-	return np.sum(s), indx_list
+    s=np.sort(dist)
+    s=s[:len(dist)-z-1]
+    return np.sum(s), indx_list
