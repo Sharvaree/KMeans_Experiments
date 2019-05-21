@@ -42,34 +42,24 @@ def  KPP_centers(data, num_clusters):
     KPP_centers= KPP.centers
     return np.array(KPP_centers)
 
+#Call KmeansOutliers functions and returns KMO centers
 def KMO_centers(data, num_clusters, phi_star, z):
     ko_centers, cid, dist = kmeansOutliers(data, phi_star, z, num_clusters)
     return np.array(ko_centers)
 
 
 
-# Add noise
+# Add noise (Use for SKIN)
 def add_noise(data, z, min_value, max_value):
     data_copy=data.copy()
     data_with_outliers, z_indx = add_random_noise(data_copy, z, min_value, max_value)
     data_inliers= np.delete(data_copy, z_indx, axis=0)
     return data_with_outliers, z_indx, data_inliers
 
+#Use for high dimensional data
 def add_noise_general(data, z, min_value, max_value):
     data_copy=data.copy()
     data_with_outliers, z_indx = add_rand_noise_general(data_copy, z, min_value, max_value)
-    data_inliers= np.delete(data, z_indx, axis=0)
-    return data_with_outliers, z_indx, data_inliers
-
-def add_noise_SUSY8(data, z, min_value, max_value):
-    data_copy=data.copy()
-    data_with_outliers, z_indx = add_rand_noise_SUSY8(data_copy, z, min_value, max_value)
-    data_inliers= np.delete(data, z_indx, axis=0)
-    return data_with_outliers, z_indx, data_inliers
-
-def add_noise_SUSY10(data, z, min_value, max_value):
-    data_copy=data.copy()
-    data_with_outliers, z_indx = add_rand_noise_SUSY10(data_copy, z, min_value, max_value)
     data_inliers= np.delete(data, z_indx, axis=0)
     return data_with_outliers, z_indx, data_inliers
 
@@ -141,7 +131,7 @@ def LloydOut(data, centers, num_clusters,z, tol, itr, z_indx):
     #print(("Precision:{}, recall:{}, itr:{}". format(precision, recall, i)))
     return new_centers, cid, indx_list, precision, recall, data_copy
 
-
+#This is expensive
 def LO_cost(data, cid, centers, z):
     data_copy= data.copy()
     dist= distance.cdist(data_copy, np.array(centers))
@@ -166,3 +156,14 @@ def LO_cost2(data, centers, z):
 	s=np.sort(dist)
 	s=s[:len(dist)-z-1]
 	return np.sum(s)
+
+
+#This cost function is used when using algorithms without Lloyds, as this returns indx_list
+#which is used to calculate precision and recall
+def LO_cost3(data, centers, z):
+	dist=distance.cdist(data, np.array(centers))
+	dist=np.amin(dist, axis=1)
+    indx_list = np.argpartition(dist, -z)[-z:]
+	s=np.sort(dist)
+	s=s[:len(dist)-z-1]
+	return np.sum(s), indx_list

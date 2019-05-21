@@ -1,3 +1,11 @@
+'''
+    File name:      LLoyds.py
+    Description:    Classic Lloyd's algorithm (without Outliers)
+    Author:         Sharvaree V
+    Last modified:  20th May 2019
+    Python Version: 3.5
+'''
+
 import numpy as np
 from scipy.spatial import distance
 import math
@@ -31,12 +39,12 @@ def Lloyd(data, centers, num_clusters, tol, itr):
         dist= distance.cdist(data, np.array(centers))
         cid = np.argmin(dist, axis=1)
         dist = np.amin(dist, axis = 1)
-        
-    
+
+
         for j in range(num_clusters):
             if len(data[cid==j])>0:
                 new_centers[j]= np.mean(data[cid==j], axis=0)
-    
+
         plt.figure()
         plt.scatter(data[:,0], data[:,1], c=cid)
         plt.scatter(centers[:,0], centers[:,1], marker='o', color= 'red')
@@ -45,20 +53,20 @@ def Lloyd(data, centers, num_clusters, tol, itr):
 
         old_centers= centers
         centers=new_centers
-            
+
         isOPTIMAL= True
 
         if (len(np.setdiff1d(new_centers,old_centers)))>tol:
             isOPTIMAL= False
 
-           
+
         if isOPTIMAL:
             break
-    
-    
+
+
     return new_centers, cid
 
-    
+
 
 def L_cost(data, cid, centers):
     dist= distance.cdist(data, np.array(centers))
@@ -71,4 +79,3 @@ def L_cost(data, cid, centers):
 
     total_cost= np.sum(cost)/len(data_new)
     return total_cost
-

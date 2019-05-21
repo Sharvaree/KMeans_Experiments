@@ -2,7 +2,7 @@
     File name:      LO.py
     Description:    Classic Lloyd's algorithm which ignores z furthest cluster
                     points at every iteration, with Kmeans++ and Random
-                    initialization
+                    initialization (same as LO.py, except that this returns Lloyd convergence iteration number)
     Author:         Sharvaree V
     Last modified:  16th May 2019
     Python Version: 3.5
@@ -61,17 +61,6 @@ def add_noise_general(data, z, min_value, max_value):
     data_inliers= np.delete(data, z_indx, axis=0)
     return data_with_outliers, z_indx, data_inliers
 
-def add_noise_SUSY8(data, z, min_value, max_value):
-    data_copy=data.copy()
-    data_with_outliers, z_indx = add_rand_noise_SUSY8(data_copy, z, min_value, max_value)
-    data_inliers= np.delete(data, z_indx, axis=0)
-    return data_with_outliers, z_indx, data_inliers
-
-def add_noise_SUSY10(data, z, min_value, max_value):
-    data_copy=data.copy()
-    data_with_outliers, z_indx = add_rand_noise_SUSY10(data_copy, z, min_value, max_value)
-    data_inliers= np.delete(data, z_indx, axis=0)
-    return data_with_outliers, z_indx, data_inliers
 
 def add_noise_SUSY18(data, z, min_value, max_value):
     data_copy=data.copy()
@@ -166,3 +155,11 @@ def LO_cost2(data, centers, z):
 	s=np.sort(dist)
 	s=s[:len(dist)-z-1]
 	return np.sum(s)
+
+def LO_cost3(data, centers, z):
+	dist=distance.cdist(data, np.array(centers))
+	dist=np.amin(dist, axis=1)
+    indx_list = np.argpartition(dist, -z)[-z:]
+	s=np.sort(dist)
+	s=s[:len(dist)-z-1]
+	return np.sum(s), indx_list

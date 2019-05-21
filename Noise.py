@@ -45,30 +45,6 @@ def add_rand_noise_general(data, z, min_value, max_value):
         data_copy[index]= data_copy[index] + sign()*noise[index]
     return data_copy, z_indx
 
-def add_rand_noise_SUSY8(data, z, max_value, min_value):
-    data_copy= data.copy()
-    z_indx= np.random.choice(len(data)-1, z)#pick z random points
-    #x, d = data.shape
-    for index in z_indx:
-        noise= np.array([sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value),
-                         sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value),
-                         sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value),
-                         sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value)])
-        data_copy[index]= data_copy[index]+ np.array(noise)
-    return data_copy, z_indx
-
-def add_rand_noise_SUSY10(data, z, min_value, max_value):
-    data_copy= data.copy()
-    z_indx= np.random.choice(len(data)-1, z)#pick z random points
-    #x, d = data.shape
-    for index in z_indx:
-        noise= np.array([sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value),
-                         sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value),
-                         sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value),
-                         sign()*np.random.uniform(min_value,max_value), sign()*np.random.uniform(min_value,max_value),
-                         sign()*np.random.uniform(min_value,max_value),  sign()*np.random.uniform(min_value,max_value)])
-        data_copy[index]= data_copy[index]+ np.array(noise)
-    return data_copy, z_indx
 
 def add_rand_noise_SUSY18(data, z, min_value, max_value):
     data_copy= data.copy()
