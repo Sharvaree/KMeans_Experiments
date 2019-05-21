@@ -24,8 +24,8 @@ skin_labels= read_data[:,3]
 skin_data=read_data[:,0:3]
 
 num_clusters=[20]
-zs =[25]
-min_value= 220
+zs =[5000]
+min_value= 240
 max_value=255
 #min_values=[-16, 0, 7.693475e-08]
 #max_values= [15, 20, 33]
