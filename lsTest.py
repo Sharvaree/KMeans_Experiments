@@ -286,12 +286,9 @@ def computeKMLSCoreset(synthD):
 				print("numpts", numpts)
 				#numpts = int(sd.n/10)
 				#numpts = sd.k + sd.z
-				ans, empz = ls.lsOutCor(sd.data,sd.runk,sd.z, eps,numpts)
+				ans, empz = ls.lsOutCor(sd.data,sd.runk,sd.z, eps,numpts, debug = False)
 				
-				zind = []
-				for i in range(sd.k,sd.k+sd.z):
-					zind.append(i)
-				ans, cid, wins, prec, rec = lloyd.LloydOut(sd.data, ans, sd.runk, sd.z,1, 100, zind)
+				ans, cid, wins, prec, rec, garbage= lloyd.LloydOut(sd.data, ans, sd.runk, sd.z,1, 100, zind)
 
 				cost2 = kmo.cost2(sd.data, ans, int(sd.z))
 

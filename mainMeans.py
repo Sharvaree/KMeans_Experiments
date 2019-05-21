@@ -24,7 +24,11 @@ import LO as lloyd
 extraInfo = ["optimal cost","av prec", "max prec", "av recall", "max recall", "prec sd", "cost", "cr", "recall sd", "cost sd", "cr sd"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
 
 zprop = [0.5, 1, 2]
-phistarprop = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0]
+#phistarprop = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0]
+phistarprop = [0.1, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
+for i in range(3, 10, 1):
+	phistarprop.append(i)
+print(phistarprop)
 eps = 0.1
 
 #Class that contains info and 
@@ -381,18 +385,19 @@ def computeKMOutliersLloyd(synthD):
 				recs = []
 				cs = []
 				crs = []
-				for i in range(5):
+				for i in range(20):
 					#Running kMeansOut on the data
 					centers, cid, dist, wins = kmo.kmeansOutliers(sd.data,sd.phistar*sd.runphi,sd.z, sd.runk)
 					zind = []
 					for i in range(sd.k,sd.k+sd.z):
 						zind.append(i)
-					ans, cid, wins, prec, rec = lloyd.LloydOut(sd.data, centers, sd.runk, sd.z,1, 100, zind)
+					ans, cid, wins, prec, rec, garbage = lloyd.LloydOut(sd.data, centers, sd.runk, sd.z,1, 100, zind)
 					#kmo_cost, index_list = kmo.cost(sd.data, cid, ans, int(sd.z))
 					#average_cost= np.sum(kmo_cost)
-					cost2 = kmo.cost2(sd.data, ans, int(sd.z))
+					cost2 = kmo.cost2(sd.data, ans, 0)
 					#print("Sharvaree_cost:", average_cost)
 					#assert(cost2 == average_cost)
+					print("Prec, rec",prec, rec)
 					cr = km.cr(sd, ans)
 
 					#Computing cost

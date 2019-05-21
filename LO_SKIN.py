@@ -41,8 +41,21 @@ iterations=5
 
 #number of runs for a fixed dataset
 runs=10
+#####
+statsK = []
+#####
 for num_cluster in num_clusters:
+	#####
+	statsB = []
+	#####
     for beta in betas:
+		#####
+		statsAlg = [[],[],[]]
+		
+		statsKPP = statsAlg[0]
+		statsKMO = statsAlg[1]
+		statsLS = statsAlg[2]
+		#####
         print("num_cluster:{}, b:{}".format(num_cluster, beta))
         KMO_LO_prec = []
         KPP_LO_prec = []
@@ -65,6 +78,9 @@ for num_cluster in num_clusters:
             R_LO_itr_runs=[]
             data_with_outliers, z_indx, data_inliers = add_noise(data, z, min_value, max_value)
             for j in range(runs):
+				#----------
+				#kpp
+				#----------
                 kpp_centers = KPP_centers(data_with_outliers, num_cluster)
                 #print("KPP")
                 centers, cid, indx_list, KPP_precision, recall, data_out, KPP_itr =LloydOut(data_with_outliers, kpp_centers, num_cluster, z, tol, itr, z_indx )
@@ -80,6 +96,10 @@ for num_cluster in num_clusters:
                 #3R_LO_cost.append(R_cost)
                 #KPP_LO_cost.append(KPP_cost)
                 #print("KMO")
+
+				#----------
+				#kmo
+				#----------
                 phi_star= compute_phi_star(data, num_cluster, kpp_centers, z)
                 kmo_centers= KMO_centers(data_with_outliers, num_cluster, phi_star, z)
 
@@ -88,6 +108,10 @@ for num_cluster in num_clusters:
                 KMO_LO_prec_runs.append(KMO_precision)
                 KMO_LO_cost_runs.append(KMO_cost)
                 KMO_LO_itr_runs.append(KMO_itr)
+
+				#----------
+				#ls
+				#----------
             print("PHI-star:{}".format(phi_star))
             print("runs:{},KPP:{}, cost:{}, itr: {}".format(j+1, np.mean(np.array(KPP_LO_prec_runs)), np.mean(np.array(KPP_LO_cost_runs)), np.mean(np.array(KPP_LO_itr_runs))))
             #print("Random:{}, cost:{}, itr:{}".format(np.mean(np.array(R_LO_prec)),np.mean(np.array(R_LO_cost))))

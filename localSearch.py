@@ -12,6 +12,7 @@ import time
 
 import kMeanspp as kmpp
 
+DEBUG = True
 
 def update_dist(dist, tempdist, cid, data, ix):
 	for indx in range(len(data)):
@@ -286,7 +287,7 @@ def kmeanspp(data,num_clusters):
         wins.append(new_index[0])
         
         #Adding new center
-        centers = np.append(centers, data[new_index], axis = 0)
+        centers = np.append(centers, data[new_index].copy(), axis = 0)
 
     dist= distance.cdist(data, np.array(centers))
     dist = np.argmin(dist, axis = 1)
@@ -422,7 +423,8 @@ def lsCor(u,w, c, k, eps):
 	curcost = cost2im(u, c,0,w)
 	count=0
 	while(alpha*(1-(eps/k)) > curcost):
-		print("			LS:it",count)
+		if(DEBUG):
+			print("			LS:it",count)
 		alpha = curcost
 		
 		improvedC = c.copy()
@@ -434,7 +436,8 @@ def lsCor(u,w, c, k, eps):
 				newCost = cost2im(u,improvedC,0,w)
 
 				if(newCost< bestCost):
-					print("			BestCost", bestCost, "newCost", newCost)
+					if(DEBUG):
+						print("			BestCost", bestCost, "newCost", newCost)
 					bestCost = newCost
 				else:
 					improvedC[j] = temp
@@ -445,7 +448,9 @@ def lsCor(u,w, c, k, eps):
 	
 	return c
 
-def lsOutCor(u,k,z, eps, coresetSize):
+def lsOutCor(u,k,z, eps, coresetSize, debug = True):
+	global DEBUG
+	DEBUG = debug
 	u2 = u.copy()
 	u, w, wins = kmeanspp(u,coresetSize)
 	c, nothing, inds = kmeanspp(u,k)
@@ -457,7 +462,8 @@ def lsOutCor(u,k,z, eps, coresetSize):
 	curcost = cost2im(uNoOut, c,0,w)
 	count = 0
 	while(alpha*(1-(eps/k)) > curcost):
-		print("		LSOut:it",count)
+		if(DEBUG):
+			print("		LSOut:it",count)
 		alpha = curcost
 
 		#(i)
@@ -490,7 +496,8 @@ def lsOutCor(u,k,z, eps, coresetSize):
 					improvedZ = list(set(zsInd).union(set(new_out_ind)))
 					uNoOut3 = np.delete(u,improvedZ, axis=0)
 					inds[j] = i
-					print("		BestCost", bestCost, "newCost", newCost, "point", wins[i], "in index", j , "inds", convert(inds,wins))
+					if(DEBUG):
+						print("		BestCost", bestCost, "newCost", newCost, "point", wins[i], "in index", j , "inds", convert(inds,wins))
 					bestCost = newCost
 				else:
 					improvedC[j] = temp
@@ -510,4 +517,9 @@ def lsOutCor(u,k,z, eps, coresetSize):
 
 	return c, len(zsInd)
 
+
+def avOverRows(a):
+	for i in range(len(a)):
+		a[i] = np.mean(a[i])
+	return a
 

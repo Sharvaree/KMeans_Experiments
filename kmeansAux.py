@@ -161,3 +161,5 @@ def cr(sd, wins):
 	print("cr:",recall)
 
 	return recall
+
+
