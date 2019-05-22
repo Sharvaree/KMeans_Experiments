@@ -13,7 +13,6 @@ def kMPrecRecall(sd, wins):
 	tp = 0
 
 	outInd = outliers(sd.data, wins, sd.z)
-	print(outInd)
 	
 	for i in range(sd.k, sd.k+sd.z):
 		for ind in outInd:

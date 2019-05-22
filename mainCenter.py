@@ -164,12 +164,13 @@ def computeKC(synthD):
 		print("Iteration:",num)
 		num+=1
 
-		for j in range(int(sd.k*2)):
-			sd.runk = sd.k + j
+		for j in range(int(sd.k)):
+			sd.runk = int(sd.k/2) + j
 			precs = []
 			recs = []
 			for i in range(1):
 				#Running kcenterOut on the data
+				random.seed(12345)
 				kcent = gon.gonzalez(sd.data,sd.runk,sd.s)
 				ans= kcent.gonzalez()
 
@@ -203,12 +204,13 @@ def computeKCoutliers(synthD):
 		print("Iteration:",num)
 		num+=1
 
-		for j in range(int(sd.k*2)):
-			sd.runk = sd.k + j
+		for j in range(int(sd.k)):
+			sd.runk = int(sd.k/2)  + j
 			precs = []
 			recs = []
 			for i in range(5):
 				#Running kcenterOut on the data
+				random.seed(12345)
 				kcent = kco.kcentersOut(sd.data,sd.runk,sd.s)
 				ans= kcent.kcentersOut()
 
@@ -242,8 +244,8 @@ def computeKCRandom(synthD):
 		print("Iteration:",num)
 		num+=1
 
-		for j in range(int(sd.k*2)):
-			sd.runk = sd.k + j
+		for j in range(int(sd.k)):
+			sd.runk = int(sd.k/2) + j
 			precs = []
 			recs = []
 			for i in range(5):

@@ -15,7 +15,7 @@ import random
 #		example: sds = [1] * d will define all standard deviations to be 1
 #		example: sds = 1 will have the same effect
 #z: number of outliers
-def generatorNorm(n,d,k,rang,sds,z,num):
+def generatorNorm(n,d,k,rang,sds,z,num, zrang = False):
     #Constants
     if(isinstance(sds,int) or isinstance(sds,float)):
         sds = [sds]*d
@@ -24,7 +24,8 @@ def generatorNorm(n,d,k,rang,sds,z,num):
         n = sum(n)
     else:
         s = [int(n/k)]*k
-    zrang = rang
+    if(zrang==False):
+        zrang = rang
     
     #Generate centers
     centers = []

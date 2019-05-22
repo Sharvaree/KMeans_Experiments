@@ -518,8 +518,3 @@ def lsOutCor(u,k,z, eps, coresetSize, debug = True):
 	return c, len(zsInd)
 
 
-def avOverRows(a):
-	for i in range(len(a)):
-		a[i] = np.mean(a[i])
-	return a
-

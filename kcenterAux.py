@@ -24,7 +24,7 @@ def kCPrecRecall(sd, wins):
 	fn = 0
 	centers = sd.data[:sd.k]
 	r2 = 2*sd.s
-		
+	
 	dists = distance.cdist(wins, centers)
 	
 	for i in range(len(dists)):
@@ -41,8 +41,8 @@ def kCPrecRecall(sd, wins):
 	
 	fn = sd.k - np.sum(hit)
 
-	prec = tp/(tp+fp)
-	recall = tp/(tp+fn)
+	prec = tp/(sd.k)
+	recall = tp/(sd.k)
 
 	print(prec, recall)
 
