@@ -26,6 +26,10 @@ def update_dist(dist, tempdist, cid, data, ix):
             cid[indx] = ix
     return dist, cid
 
+def squareMat(ar):
+	for i in range(len(ar)):
+		ar[i] = ar[i]*ar[i]
+	return ar
 
 def kmeansOutliers(data, phi_star, z, num_clusters):
     
@@ -47,6 +51,7 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
         
         #keep only the distance min(dist, tempdist)
         dist, cid = update_dist(dist, tempdist, cid, data, i)
+        dist = squareMat(dist)
         
         #thresholded value
         th = (phi_star/z)*np.ones(len(data))
@@ -62,6 +67,8 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
         #Picking new center with the above distribution
         new_index = np.random.choice(len(data), 1, p=distribution)
         wins.append(new_index[0])
+
+        #print(data[new_index])
         
         #Adding new center
         centers = np.append(centers, data[new_index], axis = 0)

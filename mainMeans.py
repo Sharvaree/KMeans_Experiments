@@ -20,6 +20,8 @@ import localSearch as ls
 import kMeanspp as kmpp
 import LO as lloyd
 
+plt.rcParams['pdf.fonttype'] = 42
+
 #Constants
 extraInfo = ["optimal cost","av prec", "max prec", "av recall", "max recall", "prec sd", "recall sd","cost", "cr",  "cost sd", "cr sd"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
 
@@ -66,7 +68,7 @@ def get_csv(fileName):
 #for k-Means with Outliers" 
 def createSynthDataGKL():
 	files = []
-	sds = [10]
+	sds = [5]
 	ks = [20]
 	zs = [2000]
 	ds = [15]
@@ -75,7 +77,7 @@ def createSynthDataGKL():
 			for z in zs:
 				for d in ds:
 					for num in range(10):
-						files.append(gn.generatorNorm(10000,d ,k,50.0,sd,z,num, zrang = 100))
+						files.append(gn.generatorNorm(10000,d ,k,50.0,sd,z,num, zrang = 200))
 	print("----------------\nFiles generated\n----------------")
 	print("Generated files from of synthetic data \n as done by Gupta, Kumar and Lu.\n Listed below")
 	print(files)
@@ -323,6 +325,11 @@ def computeKMLSCoreset(synthD):
 
 
 ###############################################################################
+
+runs = 3
+start = 15
+ite = 25
+
 #Compute thresholded k means w/ outliers
 def computeKMoutliers(synthD):
 	num = 0
@@ -334,14 +341,16 @@ def computeKMoutliers(synthD):
 		print("-------------------------\nIteration:",num,"\n-------------------------")
 		num+=1
 
-		for j in range(int(sd.k)):
+		#print(distance.cdist(sd.data[:sd.k], sd.data[:sd.k]))
+
+		for j in range(ite):#int(sd.k)):
 			sd.runphi = 1.0
-			sd.runk = int(sd.k/2) + j
+			sd.runk = start + j
 			precs = []
 			recs = []
 			cs = []
 			crs = []
-			for i in range(5):
+			for i in range(runs):
 				#Running kMeansOut on the data
 				ans, cid, dist, wins = kmo.kmeansOutliers(sd.data,sd.phistar*sd.runphi,sd.z, sd.runk)
 				#kmo_cost, index_list = kmo.cost(sd.data, cid, ans, int(sd.z))
@@ -389,14 +398,14 @@ def computeKMOutliersLloyd(synthD):
 		print("-------------------------\nIteration:",num,"\n-------------------------")
 		num+=1
 
-		for j in range(int(sd.k)):
+		for j in range(ite):#int(sd.k)):
 			sd.runphi = 1.0
-			sd.runk = int(sd.k/2) + j
+			sd.runk = start + j
 			precs = []
 			recs = []
 			cs = []
 			crs = []
-			for i in range(5):
+			for i in range(runs):
 				#Running kMeansOut on the data
 				centers, cid, dist, wins = kmo.kmeansOutliers(sd.data,sd.phistar*sd.runphi,sd.z, sd.runk)
 				zind = []
@@ -449,15 +458,15 @@ def computeKMPP(synthD):
 		num+=1
 
 		
-		for j in range(int(sd.k)):
+		for j in range(ite):
 			print("TrueCost:", sd.phistar)
 			sd.runphi = 1.0
-			sd.runk = int(sd.k/2) + j
+			sd.runk = start + j
 			precs = []
 			recs = []
 			cs = []
 			crs = []
-			for i in range(5):
+			for i in range(runs):
 				ans = kmpp.kmeanspp(sd.data,sd.runk)
 
 				cost2 = kmo.cost2(sd.data, ans, 0)
@@ -501,14 +510,14 @@ def computeKMPPLloyd(synthD):
 		num+=1
 
 		
-		for j in range(int(sd.k)):
+		for j in range(ite):
 			sd.runphi = 1
-			sd.runk = int(sd.k/2) + j
+			sd.runk = start + j
 			precs = []
 			recs = []
 			cs = []
 			crs = []
-			for i in range(5):
+			for i in range(runs):
 				#Running Lloyds
 				centers =  kmpp.kmeanspp(sd.data, sd.runk)
 				zind = []
@@ -698,11 +707,12 @@ def plotingVariousOverK(statsAr,labels):
 
 	stats = statsAr[0]
 
-	plt.figure(figsize=(19.2,4.8))
-	plt.suptitle("n=" + str(int(stats[0][0])) + ", d=" + str(int(stats[0][1])) + ", k=" + str(int(stats[0][2])) + ", rang=" + str(int(float(stats[0][3]))) + ", z=" + str(int(stats[0][4])) + ", sigma=" + str(int(stats[0][5]))+ ".")
+	plt.figure(figsize=(12.8,4.8))
+	#plt.suptitle("n=" + str(int(stats[0][0])) + ", d=" + str(int(stats[0][1])) + ", k=" + str(int(stats[0][2])) + ", rang=" + str(int(float(stats[0][3]))) + ", z=" + str(int(stats[0][4])) + ", sigma=" + str(int(stats[0][5]))+ ".")
 
-	name = "km_allk_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5])+ ".png"
-		
+	name = "km_allk_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5])+ ".pdf"
+	
+	'''	
 	plt.subplot(131)
 	plt.title("Mean Outlier Precision/Recall")
 
@@ -715,8 +725,9 @@ def plotingVariousOverK(statsAr,labels):
 		plt.plot(kss[i], avprecs[i], linestyle = '-', label = labels[i],color =colors[i])
 	plt.legend(loc='best')
 	plt.tight_layout(rect = [0,0.03,1,0.95])
+	'''
 
-	plt.subplot(132)
+	plt.subplot(121)
 	plt.title("Mean Center Recall")
 
 	plt.xlabel("k")
@@ -729,7 +740,7 @@ def plotingVariousOverK(statsAr,labels):
 	plt.legend(loc='best')
 	plt.tight_layout(rect = [0,0.03,1,0.95])
 
-	plt.subplot(133)
+	plt.subplot(122)
 	plt.title("Mean Cost")
 
 	plt.xlabel("k")
@@ -802,7 +813,7 @@ def plotingVariousOverPhi(statsAr,labels):
 	plt.figure(figsize=(19.2,4.8))
 	plt.suptitle("Figure n=" + str(int(stats[0][0])) + ", d=" + str(int(stats[0][1])) + ", k=" + str(int(stats[0][2])) + ", rang=" + str(int(float(stats[0][3]))) + ", z=" + str(int(stats[0][4])) + ", sigma=" + str(int(stats[0][5]))+ ".")
 
-	name = "km_allphi_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5])+ ".png"
+	name = "km_allphi_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5])+ ".pdf"
 		
 	plt.subplot(131)
 	plt.title("Mean Outlier Precision/Recall")
@@ -868,7 +879,7 @@ def boxPlot(stats):
 		
 	plt.boxplot(y, labels = x)
 
-	name = "km_boxPlot_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][6])+ "p" + str(int(stats[0][7])) + ".png"
+	name = "km_boxPlot_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][6])+ "p" + str(int(stats[0][7])) + ".pdf"
 	plt.savefig("visualizations/" + name)
 	plt.clf()
 
@@ -877,7 +888,7 @@ def boxPlot(stats):
 ############################################################################################
 def main():
 	#Creates synthetic data as described in paper 10 copies each
-	#createSynthDataGKL()
+	createSynthDataGKL()
 	#createSynthDataGKLCenters()
 
 	synthData = getAllSynthNames()
@@ -886,13 +897,13 @@ def main():
 	statsKMOutLloyd = computeKMOutliersLloyd(synthData)
 	
 	newStatsKMOutLloyd = processStats(statsKMOutLloyd)
-
+	
 	algtype = [newStatsKMOutLloyd]
-
+	
 	plotNames = ["T-kmeans++"]
-
+	
 	plotingVariousOverPhi(algtype,plotNames)
-
+	
 	writeKMStats(statsKMOutLloyd,"synth_tkmpp.csv")
 
 	'''
@@ -912,8 +923,11 @@ def main():
 
 	for i in range(1):#int(len(synthData)/10) - 1):
 		statsKMOut = computeKMoutliers(synthData[i*10:(i+1)*10])
-		statsKMOutLloyd = computeKMOutliersLloyd(synthData[i*10:(i+1)*10])
+		print("kmpp++++++++++++++++++++++++++++++++++++++++++++++")
 		stasKMPP = computeKMPP(synthData[i*10:(i+1)*10])
+		print("tkmlloyd++++++++++++++++++++++++++++++++++++++++++++++")
+		statsKMOutLloyd = computeKMOutliersLloyd(synthData[i*10:(i+1)*10])
+		print("kmpplloyd++++++++++++++++++++++++++++++++++++++++++++++")
 		statsLloyd = computeKMPPLloyd(synthData[i*10:(i+1)*10])
 
 		(writeStats[0]).extend(statsKMOut)

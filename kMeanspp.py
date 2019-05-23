@@ -26,6 +26,10 @@ def update_dist(dist, tempdist, cid, data, ix):
             cid[indx] = ix
     return dist, cid
 
+def squareMat(ar):
+	for i in range(len(ar)):
+		ar[i] = ar[i]*ar[i]
+	return ar
 
 def kmeanspp(data,num_clusters):
     
@@ -48,12 +52,15 @@ def kmeanspp(data,num_clusters):
         dist, cid = update_dist(dist, tempdist, cid, data, i)
         
         #Normalizing
+        dist = squareMat(dist)
         tempSum = sum(dist)
         distribution = dist/tempSum
         
         #Picking new center with the above distribution
         new_index = np.random.choice(len(data), 1, p=distribution)
         wins.append(new_index[0])
+
+        #print(data[new_index])
         
         #Adding new center
         centers = np.append(centers, data[new_index], axis = 0)

@@ -21,6 +21,20 @@ import sklearn.datasets
 import realAux as real
 import localSearch as ls
 
+#######
+from sklearn.decomposition import TruncatedSVD
+
+rng = np.random.RandomState(8)
+
+path = 'realDataProcessed/mnist_train.csv'
+data = np.array(pd.read_csv(path))#, header=0, index_col=0))
+
+d = 40
+svd = TruncatedSVD(n_components=d, n_iter=20, random_state=rng)
+data = svd.fit_transform(data)
+#######
+
+'''
 mnist_data = genfromtxt('realDataProcessed/mnist_train.csv', delimiter=',')
 print("Data loaded")
 processed_data= np.delete(mnist_data,0, axis=0)
@@ -33,24 +47,30 @@ a= pca.components_.T
 print("PCA done. Considering first {} principal components".format(n_components))
 data=a
 print("Shape of the data:{}".format(data.shape))
-num_clusters=[10, 15, 20, 25]
-betas= [.1,.25, .5, .6,  .7, .9, 1, 1.5, 2,3, 5, 7, 10]
+'''
+
+num_clusters=[10, 20, 30]
+betas= [.125,.25, .5, .75, 1, 2, 5]
 #Approx 5% od the dataset
-z=3000
-min_value= [-0.022]
-max_value=[.023]
-#min_value= np.min(np.amin(data, axis=1), axis=0)
-#max_value=np.max(np.amax(data, axis=1), axis=0)
+z=int(3000/2)
+
+print(data.shape)
+
+factor = 2
+min_value= np.min(np.amin(data, axis=1), axis=0)*factor
+max_value= np.max(np.amax(data, axis=1), axis=0)*factor
+
+print(min_value, max_value, factor)
 
 tol= .05
 #Number of Lloyds iterations
 itr=100
 
 #Number of experiments
-iterations=5
+iterations=2
 
 #number of runs for a fixed dataset
-runs=10
+runs=2
 
 #LS iterations
 lsit = 1
@@ -106,6 +126,7 @@ for num_cluster in num_clusters:
 			#----------
 			#kpp
 			#----------
+			
 			kpp_centers = KPP_centers(data_with_outliers, num_cluster)
 			#print("KPP")
 			centers, cid, indx_list, KPP_precision, recall, data_out, KPP_itr =LloydOut(data_with_outliers, kpp_centers, num_cluster, z, tol, itr, z_indx )
@@ -114,11 +135,18 @@ for num_cluster in num_clusters:
 			KPP_LO_rec_runs.append(KPP_precision)
 			KPP_LO_cost_runs.append(KPP_cost)
 			KPP_LO_itr_runs.append(KPP_itr)
-
+			print(KPP_precision)
+			'''
+			KPP_LO_prec_runs.append(0)
+			KPP_LO_rec_runs.append(0)
+			KPP_LO_cost_runs.append(0)
+			KPP_LO_itr_runs.append(0)
+			'''
 			#----------
 			#kmo
 			#----------
 			for k in range(len(betas)):
+				
 				beta = betas[i]
 				phi_star= compute_phi_star(data, num_cluster, kpp_centers, z)
 				kmo_centers= KMO_centers(data_with_outliers, num_cluster, beta*phi_star, z)
@@ -129,20 +157,33 @@ for num_cluster in num_clusters:
 				KMO_LO_rec_runs[k].append(KMO_precision)
 				KMO_LO_cost_runs[k].append(KMO_cost)
 				KMO_LO_itr_runs[k].append(KMO_itr)
-
+				print(KMO_precision)
+				'''
+				KMO_LO_prec_runs.append(0)
+				KMO_LO_rec_runs.append(0)
+				KMO_LO_cost_runs.append(0)
+				KMO_LO_itr_runs.append(0)
+				'''
 			#----------
 			#ls
 			#----------
 			if(j < lsit):
+				
 				LS_centers, empz = ls.lsOutCor(data_with_outliers, num_cluster,z , 0.1, int(1.5*(z+num_cluster)), debug = False)
 				#print("KPP")
 				centers, cid, indx_list, LS_precision, LS_recall, data_out, LS_itr =LloydOut(data_with_outliers, LS_centers, num_cluster, empz, tol, itr, z_indx )
 				LS_cost= LO_cost2(data_with_outliers, centers, 0)
-				LS_LO_prec_runs.append(LS_precision)
-				LS_LO_rec_runs.append(LS_recall)
+				LS_LO_prec_runs.append(LS_recall)
+				LS_LO_rec_runs.append(LS_precision)
 				LS_LO_cost_runs.append(LS_cost)
 				LS_LO_itr_runs.append(LS_itr)
-			
+				'''
+				LS_LO_prec_runs.append(0)
+				LS_LO_rec_runs.append(0)
+				LS_LO_cost_runs.append(0)
+				LS_LO_itr_runs.append(0)
+				'''
+		
 		print("PHI-star:{}".format(beta*phi_star))
 		print("runs:{},KPP: prec:{}, rec:{}, cost:{}, itr: {}".format(j+1, np.mean(np.array(KPP_LO_prec_runs)),np.mean(np.array(KPP_LO_rec_runs)), np.mean(np.array(KPP_LO_cost_runs)), np.mean(np.array(KPP_LO_itr_runs))))
 		#print("Random:{}, cost:{}, itr:{}".format(np.mean(np.array(R_LO_prec)),np.mean(np.array(R_LO_cost))))

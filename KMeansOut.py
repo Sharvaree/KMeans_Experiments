@@ -33,6 +33,10 @@ def compute_phi_star(data, num_clusters, centers, z):
     phi_star=np.sum(dist)
     return phi_star
 
+def squareMat(ar):
+	for i in range(len(ar)):
+		ar[i] = ar[i]*ar[i]
+	return ar
 
 def kmeansOutliers(data, phi_star, z, num_clusters):
     '''
@@ -65,6 +69,7 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
 
         #keep only the distance min(dist, tempdist)
         dist, cid = update_dist(dist, tempdist, cid, data, i)
+        dist = squareMat(dist)
 
         #thresholded value
         th = (phi_star/z)*np.ones(len(data))
@@ -73,12 +78,13 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
         distribution = np.minimum(dist, th)
         tempSum = sum(distribution)
 
-
+        new_index = [random.randint(0, len(data)-1)]
         #Normalizing
-        distribution = distribution/tempSum
+        if(not tempSum == 0):
+            distribution = distribution/tempSum
 
-        #Picking new center with the above distribution
-        new_index = np.random.choice(len(data), 1, p=distribution)
+            #Picking new center with the above distribution
+            new_index = np.random.choice(len(data), 1, p=distribution)
 
 
         #Adding new center

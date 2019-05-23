@@ -25,7 +25,7 @@ extraInfo = ["optimal cost","av prec", "max prec", "av recall", "max recall", "p
 
 zprop = [0.5, 1, 2]
 phistarprop = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0]
-eps = 0.1
+eps = 0.001
 
 #Class that contains info and 
 #data of a single synthetic file
@@ -62,9 +62,9 @@ def get_csv(fileName):
 #for k-Means with Outliers" 
 def createSynthDataGKL():
 	files = []
-	sds = [10]
+	sds = [1]
 	ks = [20]
-	zs = [500]
+	zs = [25]
 	ds = [15]
 	for sd in sds:
 		for k in ks:
@@ -169,6 +169,79 @@ def addAnswer(stats, sd):
 def compute_phi_star(sd):
 	return kmo.cost2(sd.data[sd.k + sd.z:], sd.data[:sd.k], int(sd.z))
 
+def find_inds(data, ans):
+	l = []
+	for i in range(len(ans)):
+		for j in range(len(data)):
+			if(np.array_equal(ans[i],data[j])):
+				l.append(j)
+				break
+	return l
+
+#Compute k means w/ lsout
+def computeKMLSCoreset(synthD):
+	num = 0
+	stats = []
+	for f in synthD:
+		#reads data and parses first file in folder
+		sd = readSynthetic(f)
+		sd.phistar = compute_phi_star(sd)
+		print("Iteration:",num)
+		num+=1
+
+		for j in range(int(sd.k/2)):
+			print("TrueCost:", sd.phistar)
+			print(distance.cdist(sd.data[0:sd.k], sd.data[0:sd.k]))
+			sd.runphi = 1
+			sd.runk = sd.k + j
+			precs = []
+			recs = []
+			for i in range(1):
+				#Running kcenterOut on the data
+				numpts = 2*(sd.k+sd.z)
+				print("numpts", numpts)
+				#numpts = int(sd.n/10)
+				#numpts = sd.k + sd.z
+				ans, empz = ls.lsOutCor(sd.data,sd.runk,sd.z, eps,numpts, debug = True)
+
+				cost2 = kmo.cost2(sd.data, ans, int(sd.z))
+				
+				print("------------\nBefore Lloyds:", cost2, empz)
+				print(find_inds(sd.data, ans))
+				prec, rec = km.kMPrecRecallVar2(sd,ans, int(sd.z))
+				print("Prec, rec",prec, rec)
+				cr = km.cr1(sd, ans)
+				zind = []				
+				for i in range(sd.k, sd.k +sd.z):
+					zind.append(i)
+
+				ans, cid, wins, prec, rec, garbage= lloyd.LloydOut(sd.data, ans, sd.runk, sd.z,1, 100, zind)
+
+				cost2 = kmo.cost2(sd.data, ans, int(sd.z))
+
+				#Computing cost
+				sd.costs.append(cost2)
+
+				print("After Lloyds:", cost2)
+				print("Prec, rec",prec, rec)
+				cr = km.cr1(sd, ans)
+				input()
+				precs.append(prec)
+				recs.append(rec)
+
+			sd.precs = precs
+			sd.recs = recs
+
+			#example for adding extra stats, i.e. time. For headers, go to top
+			sd.extrastats = [sd.phistar,mean(np.array(precs)), max(precs), mean(np.array(recs)), max(recs)]
+
+			printSD(sd)
+	
+			stats = addAnswer(stats, sd)
+			sd.costs = []
+	
+	return stats
+
 #Compute k means w/ lsout with subset
 def computeKMLS(synthD):
 	num = 0
@@ -263,55 +336,7 @@ def computeKMPP(synthD):
 	
 	return stats
 
-#Compute k means w/ lsout
-def computeKMLSCoreset(synthD):
-	num = 0
-	stats = []
-	for f in synthD:
-		#reads data and parses first file in folder
-		sd = readSynthetic(f)
-		sd.phistar = compute_phi_star(sd)
-		print("Iteration:",num)
-		num+=1
 
-		for j in range(int(sd.k/2)):
-			print("TrueCost:", sd.phistar)
-			sd.runphi = 1
-			sd.runk = sd.k + j
-			precs = []
-			recs = []
-			for i in range(1):
-				#Running kcenterOut on the data
-				numpts = 2*(sd.k+sd.z)
-				print("numpts", numpts)
-				#numpts = int(sd.n/10)
-				#numpts = sd.k + sd.z
-				ans, empz = ls.lsOutCor(sd.data,sd.runk,sd.z, eps,numpts, debug = False)
-				
-				ans, cid, wins, prec, rec, garbage= lloyd.LloydOut(sd.data, ans, sd.runk, sd.z,1, 100, zind)
-
-				cost2 = kmo.cost2(sd.data, ans, int(sd.z))
-
-				#Computing cost
-				sd.costs.append(cost2)
-
-				km.cr(sd, ans)
-				input()
-				precs.append(prec)
-				recs.append(rec)
-
-			sd.precs = precs
-			sd.recs = recs
-
-			#example for adding extra stats, i.e. time. For headers, go to top
-			sd.extrastats = [sd.phistar,mean(np.array(precs)), max(precs), mean(np.array(recs)), max(recs)]
-
-			printSD(sd)
-	
-			stats = addAnswer(stats, sd)
-			sd.costs = []
-	
-	return stats
 
 #Compute thresholded k means w/ outliers
 def computeKMoutliers(synthD):
@@ -784,30 +809,4 @@ def main():
 
 ############################################################################################
 
-#Sample functions
-def runOnSynth():
-	#reads data and parses first file in folder
-	sd = readSynthetic(synthData[0])
-
-	#Running kcenterOut on the data
-	kcent = kco.kcentersOut(sd.data,sd.k,sd.s)
-	ans = kcent.kcentersOut()
-
-	printSD(sd)
-	kc.kCCost(sd.data, ans, sd.s)
-
-def sampleDataGen():
-	k = 5
-	d = 15
-	s = [1000] * k 
-	sds = [1] * d
-	filename = gn.generatorNorm(5000,15 ,5,50.0,1,1000,0)
-	print(filename)
-
-def sampleReadData():
-	dataSynth = get_csv(synthData[0])
-	kcent = kco.kcentersOut(dataSynth,10,10.0)
-	ans = kcent.kcentersOut()
-	print(ans)
-  
 main()

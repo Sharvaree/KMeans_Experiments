@@ -12,12 +12,19 @@ class KMeanPlusPlus:
         self.num_clusters = num_clusters
         self.centers = np.atleast_2d(init) #in case the file is (n, ) format
         
+    def squareMat(self,ar):
+        for i in range(len(ar)):
+            ar[i] = ar[i]*ar[i]
+        return ar
+
     def fit(self, X):
         for i in range(1, self.num_clusters):
             # find the distance to the closest center for each of the points
             corresponding_centers = self.predict(X) #get closest centers
             distance_matrix = distance.cdist(X, self.centers) #get distances
+			
             distances = distance_matrix[np.arange(len(X)), corresponding_centers] 
+            distances = self.squareMat(distances)
             dist_prob = distances / sum(distances)
             
             # pick a new point based on the dist_prob

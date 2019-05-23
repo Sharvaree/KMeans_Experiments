@@ -11,8 +11,29 @@ import random
 import time
 
 import kMeanspp as kmpp
+import kmeansAux as km
 
 DEBUG = True
+
+class synthD:
+	filename = ""
+	n = 0
+	d = 0
+	k = 0
+	rang = 0.0
+	z = 0
+	c = 0
+	s = 0
+	data = 0
+	runk = 0
+	centers = []
+	costs = []
+	extrastats = [] #Please make sure len(extrastats) == len(extraInfo) if possible
+	precs = []
+	recs = []
+	phistar = 0
+	runz = 1
+	runphi = 1
 
 def update_dist(dist, tempdist, cid, data, ix):
 	for indx in range(len(data)):
@@ -42,6 +63,7 @@ def kmeansOutliers(data, phi_star, z, num_clusters):
         
 		#keep only the distance min(dist, tempdist)
 		dist, cid = update_dist(dist, tempdist, cid, data, i)
+		dist = squareMat(dist)
         
 		#thresholded value
 		th = (phi_star/z)*np.ones(len(data))
@@ -258,6 +280,11 @@ def outliersim(data, centers,z,w):
 	s = np.argsort(dist)
 	return s[len(dist) - z:]
 
+def squareMat(ar):
+	for i in range(len(ar)):
+		ar[i] = ar[i]*ar[i]
+	return ar
+
 def kmeanspp(data,num_clusters):
     
     # Random initialization
@@ -277,13 +304,18 @@ def kmeanspp(data,num_clusters):
         
         #keep only the distance min(dist, tempdist)
         dist, cid = update_dist(dist, tempdist, cid, data, i)
+        dist = squareMat(dist)
         
         #Normalizing
         tempSum = sum(dist)
-        distribution = dist/tempSum
         
-        #Picking new center with the above distribution
-        new_index = np.random.choice(len(data), 1, p=distribution)
+        new_index = [random.randint(0, len(data)-1)]
+        #Normalizing
+        if(not tempSum == 0):
+            distribution = dist/tempSum
+
+            #Picking new center with the above distribution
+            new_index = np.random.choice(len(data), 1, p=distribution)
         wins.append(new_index[0])
         
         #Adding new center
@@ -448,18 +480,73 @@ def lsCor(u,w, c, k, eps):
 	
 	return c
 
+def outliersim(data, centers, z, w):
+	dist= distance.cdist(data, np.array(centers))
+	dist = np.amin(dist, axis = 1)
+	s = np.argsort(dist)
+	neww = w.copy()
+	pos = len(s)-1
+	for i in range(z):
+		while(neww[s[pos]] <= 0):
+			pos -= 1
+		neww[s[pos]] -= 1
+	return neww
+
+def outliersdif(data, centers, z, w):
+	dist= distance.cdist(data, np.array(centers))
+	dist = np.amin(dist, axis = 1)
+	s = np.argsort(dist)
+	neww = w.copy()
+	pos = len(s)-1
+	dif = [0]*len(w)
+	for i in range(z):
+		while(neww[s[pos]] <= 0):
+			pos -= 1
+		neww[s[pos]] -= 1
+		dif[s[pos]] += 1
+	return dif
+
+def maxi(ar1, ar2):	
+	for i in range(len(ar1)):
+		if(ar2[i] > ar1[i]):
+			ar1[i] = ar2[i]
+	return ar1
+
+def elwisesum(ar1, ar2):	
+	for i in range(len(ar1)):
+		ar1[i] = ar1[i] +ar2[i]
+	return ar1
+
 def lsOutCor(u,k,z, eps, coresetSize, debug = True):
 	global DEBUG
 	DEBUG = debug
 	u2 = u.copy()
 	u, w, wins = kmeanspp(u,coresetSize)
+	if(DEBUG):
+		print("wins",wins)
+		print("w", w)
+		sd = synthD()
+		sd.data = u2
+		sd.k = k
+		cr = km.cr2(sd, u, 40)
+		print(cr)
+		print(sum(cr))
 	c, nothing, inds = kmeanspp(u,k)
+	
 	#c = randomInit(u,k)
-	zsInd = outliersim(u, c, z,w)
-	uNoOut = np.delete(u,zsInd, axis=0)
+	zsw = outliersdif(u, c, z,w)
+	if(DEBUG):
+		print("w", w)
+		print("zsw", zsw)
+		sd = synthD()
+		sd.data = u2
+		sd.k = k
+		cr = km.cr2(sd, c, 40)
+		print(cr)
+		print(sum(cr))
 	alpha = float("inf")
 
-	curcost = cost2im(uNoOut, c,0,w)
+	curcost = cost2im(u, c,0,w-zsw)
 	count = 0
 	while(alpha*(1-(eps/k)) > curcost):
 		if(DEBUG):
@@ -467,34 +554,32 @@ def lsOutCor(u,k,z, eps, coresetSize, debug = True):
 		alpha = curcost
 
 		#(i)
-		uNoOut = np.delete(u,zsInd, axis=0)
-		c = lsCor(uNoOut, w, c, k,eps)
-		curcost = cost2im(uNoOut, c,0,w)
+		c = lsCor(u, w-zsw, c, k,eps)
+		curcost = cost2im(u, c,0,w-zsw)
 
 		improvedC = c.copy()
-		improvedZ = zsInd.copy()
+		improvedZ = zsw.copy()
 
 		#(ii)
-		zsInd2 = outliersim(uNoOut, c, z,w)
-		uNoOut2 = np.delete(uNoOut,zsInd2, axis=0)
-		if(curcost*(1-(eps/k)) > cost2im(uNoOut2, c,0,w)):
-			improvedZ = np.append(improvedZ, zsInd2)
+		zsw2 = outliersdif(u, c, z,w-zsw)
+		if(curcost*(1-(eps/k)) > cost2im(u, c,0, w - zsw - zsw2)):
+			improvedZ = elwisesum(zsw,zsw2)
 
 		
 		#(iii)
-		uNoOut3 = np.delete(u,improvedZ, axis=0)
-		bestCost = cost2im(uNoOut3,improvedC,0,w)
+		bestCost = cost2im(u, improvedC, 0, w - improvedZ)
 		
 		for i in range(len(u)):
 			for j in range(len(improvedC)):
 				temp = improvedC[j].copy()
 				improvedC[j] = u[i].copy()
-				new_out_ind = outliersim(u,improvedC,z,w)
-				newCost = cost2im(uNoOut3,improvedC,0,w)
+				new_out_w = outliersdif(u,improvedC,z,w)
+				update_w = np.amax([new_out_w, zsw], axis = 0)
+
+				newCost = cost2im(u,improvedC,0,w - update_w)
 				
 				if(newCost < bestCost):
-					improvedZ = list(set(zsInd).union(set(new_out_ind)))
-					uNoOut3 = np.delete(u,improvedZ, axis=0)
+					improvedZ = update_w
 					inds[j] = i
 					if(DEBUG):
 						print("		BestCost", bestCost, "newCost", newCost, "point", wins[i], "in index", j , "inds", convert(inds,wins))
@@ -505,9 +590,8 @@ def lsOutCor(u,k,z, eps, coresetSize, debug = True):
 		#Last step
 		if(curcost*(1-(eps/k)) > bestCost):
 			c = improvedC
-			zsInd = improvedZ
-			uNoOut = np.delete(u,zsInd, axis=0)
-			curcost = cost2im(uNoOut, c,0,w)
+			zsw = improvedZ
+			curcost = cost2im(u, c,0,w-zsw)
 		count+=1
 
 	inds = convert(inds,wins)
@@ -515,6 +599,6 @@ def lsOutCor(u,k,z, eps, coresetSize, debug = True):
 	#print("wins", wins)
 	#print("inds", inds)
 
-	return c, len(zsInd)
+	return c, sum(zsw)
 
 

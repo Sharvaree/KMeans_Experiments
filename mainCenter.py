@@ -16,6 +16,8 @@ import gonzalez as gon
 import KMeansOut2 as kmo
 import localSearch as ls
 
+plt.rcParams['pdf.fonttype'] = 42
+
 #Constants
 extraInfo = ["av prec", "max prec", "av recall", "max recall", "prec sd", "recall sd"] # add header names to this list, e.g. ["cluster1cost", "cluster2cost"]. make sure values are numers, since they will be averaged over runs.
 
@@ -362,7 +364,7 @@ def plotNewStats(stats):
 	
 	#adding title
 	plt.title("Stats of [n: " + str(stats[0][0]) + ", d: " + str(stats[0][1]) + ", k: " + str(stats[0][2]) + ", rang: " + str(int(float(stats[0][3]))) + ", z: " + str(stats[0][4]) + ", sigma: " + str(stats[0][6]) + "]")
-	name = "n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".png"
+	name = "n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".pdf"
 
 	print(plotpts)
 	plt.xlabel("k")
@@ -439,7 +441,7 @@ def plotGonOut(stats,stats2):
 	plt.legend(loc='best')
 	plt.tight_layout(rect = [0,0.03,1,0.95])
 	
-	name = "kc_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".png"
+	name = "kc_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".pdf"
 	plt.savefig("visualizations/" + name)
 	plt.clf()
 
@@ -493,7 +495,7 @@ def plotGonOutRand(stats,stats2,stats3):
 	plt.legend(loc='best')
 	plt.tight_layout(rect = [0,0.03,1,0.95])
 	
-	name = "kc_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".png"
+	name = "kc_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".pdf"
 	plt.savefig("visualizations/" + name)
 	plt.clf()
 
@@ -522,7 +524,7 @@ def boxPlot(stats):
 		
 	plt.boxplot(y, labels = x)
 
-	name = "kc_boxPlot_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".png"
+	name = "kc_boxPlot_n" + str(stats[0][0]) + "d" + str(stats[0][1]) + "k" + str(stats[0][2]) + "r" + str(int(float(stats[0][3]))) + "z" + str(stats[0][4]) + "s" + str(stats[0][5]) + ".pdf"
 	plt.savefig("visualizations/" + name)
 	plt.clf()
 
