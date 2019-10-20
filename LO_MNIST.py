@@ -56,7 +56,7 @@ z=int(3000/2)
 
 print(data.shape)
 
-factor = 2
+factor = 4
 min_value= np.min(np.amin(data, axis=1), axis=0)*factor
 max_value= np.max(np.amax(data, axis=1), axis=0)*factor
 
@@ -171,7 +171,7 @@ for num_cluster in num_clusters:
 				
 				LS_centers, empz = ls.lsOutCor(data_with_outliers, num_cluster,z , 0.1, int(1.5*(z+num_cluster)), debug = False)
 				#print("KPP")
-				centers, cid, indx_list, LS_precision, LS_recall, data_out, LS_itr =LloydOut(data_with_outliers, LS_centers, num_cluster, empz, tol, itr, z_indx )
+				centers, cid, indx_list, LS_precision, LS_recall, data_out, LS_itr =LloydOut(data_with_outliers, LS_centers, num_cluster, z, tol, itr, z_indx )
 				LS_cost= LO_cost2(data_with_outliers, centers, 0)
 				LS_LO_prec_runs.append(LS_recall)
 				LS_LO_rec_runs.append(LS_precision)

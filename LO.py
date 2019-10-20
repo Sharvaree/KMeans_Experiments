@@ -22,7 +22,8 @@ import matplotlib.pyplot as plt
 from Noise import add_random_noise, add_rand_noise_th, add_rand_noise_SUSY18, add_rand_noise_general
 from KMeansOut import kmeansOutliers, cost, compute_phi_star
 from KmeansPPcenters import KMeanPlusPlus
-
+import kMeanspp as kmpp
+import KMeansOut2 as kmo
 
 
 def get_csv(fileName):
@@ -35,17 +36,25 @@ def random_centers(data, num_clusters):
 
 #Kmeans++ initialization
 def  KPP_centers(data, num_clusters):
+	'''
     random_indx= random.randint(0, len(data)-1)
     init=data[random_indx]
     KPP=KMeanPlusPlus(num_clusters=num_clusters, init=init)
     KPP.fit(data)
     KPP_centers= KPP.centers
+	
     return np.array(KPP_centers)
+	'''
+	return kmpp.kmeanspp(data, num_clusters)
 
 #Call KmeansOutliers functions and returns KMO centers
 def KMO_centers(data, num_clusters, phi_star, z):
+	'''
     ko_centers, cid, dist = kmeansOutliers(data, phi_star, z, num_clusters)
     return np.array(ko_centers)
+	'''
+	centers, cid, dist, wins = kmo.kmeansOutliers(data, phi_star, z, num_clusters)
+	return centers
 
 
 
