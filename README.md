@@ -3,9 +3,7 @@
 
 This repository contains the experimental
 code for our paper. The goal is to test 
-theoretical results on our adaptive sampling 
-algorithm to approximate the k-means 
-objective in the presence of outliers. 
+KC-Outlier and T-kmeans++ against known algorithms. 
 
 ---
 ## Python and Numpy Versions:
@@ -14,16 +12,31 @@ objective in the presence of outliers.
 	Scipy 1.2.1
 
 ---
-## Push log
-2019-04-08: HeavenlyBerserker: Basic 
-	algorithm running. Synthetic data
-	set generator running. Wrote on 
-	the readme. Real datasets ignored.
-	Pretty raw, but no known bugs. 
+## Run
 
-2019-04-30: HeavenlyBerserker: Massive
-	improvements upon algo1, using numpy
-	and scipy libraries to accelerate
-	work. Preprocessing step pushed.
-	Todo: Generator improvements.
+To run all experiments, run 
 
+> python3 main.py
+
+To create synthetic datasets and run KC-Outlier experiments, run
+
+> python3 mainCenter.py
+
+To create synthetic datasets and run T-kmeans++ experiments, run
+
+> python3 mainMeans.py
+
+To run on real datasets, run
+
+> python3 LO_<dataset>.py
+
+where <dataset> is either NIPS, MNIST, or SKIN depending on the dataset one wants to run on.
+
+Note: Make sure you have the necessary python libraries intalled.
+
+---
+## Results
+
+Spreadsheet results are outputted into the outputs directory.
+
+Visual results are outputted into the visualizations directory.

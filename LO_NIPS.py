@@ -1,8 +1,9 @@
 '''
 Tests on NIPS dataset
 '''
-
-
+import sys
+sys.path.insert(1, 'lib/')
+import os
 from sklearn.cluster import KMeans
 from scipy.spatial import distance
 import numpy as np
@@ -36,6 +37,30 @@ d = 2
 svd = TruncatedSVD(n_components=d, n_iter=20, random_state=rng)
 data = svd.fit_transform(data)
 #######
+
+def create_dir(path):
+	try:
+		os.mkdir(path)
+	except OSError:
+		print ("Creation of the directory %s failed" % path)
+	else:
+		print ("Successfully created the directory %s " % path)
+
+path1 = 'syntheticData'
+create_dir(path1)
+path1 = 'realData'
+create_dir(path1)
+path1 = 'realDataProcessed'
+create_dir(path1)
+path1 = 'syntheticDataCenters'
+create_dir(path1)
+path1 = 'Tests'
+create_dir(path1)
+path1 = 'visualizations/Final'
+create_dir(path1)
+path1 = 'outputs/NIPS'
+create_dir(path1)
+
 #plt.scatter(data[:,0], data[:,1])
 #plt.show()
 '''

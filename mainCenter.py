@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import operator
 
 #Custom imports
+sys.path.insert(1, 'lib/')
 import kcentersOutliers as kco
 import generatorNormal as gn
 import kcenterAux as kc
@@ -15,6 +16,29 @@ import generatorNormalCenters as gnc
 import gonzalez as gon
 import KMeansOut2 as kmo
 import localSearch as ls
+
+def create_dir(path):
+	try:
+		os.mkdir(path)
+	except OSError:
+		print ("Creation of the directory %s failed" % path)
+	else:
+		print ("Successfully created the directory %s " % path)
+
+path1 = 'syntheticData'
+create_dir(path1)
+path1 = 'realData'
+create_dir(path1)
+path1 = 'realDataProcessed'
+create_dir(path1)
+path1 = 'syntheticDataCenters'
+create_dir(path1)
+path1 = 'Tests'
+create_dir(path1)
+path1 = 'visualizations/Final'
+create_dir(path1)
+path1 = 'outputs/NIPS'
+create_dir(path1)
 
 plt.rcParams['pdf.fonttype'] = 42
 
@@ -534,7 +558,7 @@ def boxPlot(stats):
 def main():
 	#Creates synthetic data as described in paper 10 copies each
 	#createSynthDataGKL()
-	#createSynthDataGKLCenters()
+	createSynthDataGKLCenters()
 	
 	#Gets the names of the synthetic data files
 	#synthData = getAllSynthNames()
@@ -569,30 +593,5 @@ def main():
 	
 ############################################################################################
 
-#Sample functions
-def runOnSynth():
-	#reads data and parses first file in folder
-	sd = readSynthetic(synthData[0])
-
-	#Running kcenterOut on the data
-	kcent = kco.kcentersOut(sd.data,sd.k,sd.s)
-	ans = kcent.kcentersOut()
-
-	printSD(sd)
-	kc.kCCost(sd.data, ans, sd.s)
-
-def sampleDataGen():
-	k = 5
-	d = 15
-	s = [1000] * k 
-	sds = [1] * d
-	filename = gn.generatorNorm(5000,15 ,5,50.0,1,1000,0)
-	print(filename)
-
-def sampleReadData():
-	dataSynth = get_csv(synthData[0])
-	kcent = kco.kcentersOut(dataSynth,10,10.0)
-	ans = kcent.kcentersOut()
-	print(ans)
   
 main()

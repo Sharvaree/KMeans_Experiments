@@ -1,8 +1,9 @@
 '''
 Tests on SKIN dataset
 '''
-
-
+import sys
+sys.path.insert(1, 'lib/')
+import os
 from sklearn.cluster import KMeans
 from scipy.spatial import distance
 import numpy as np
@@ -18,6 +19,29 @@ from LO_with_itr import LloydOut
 
 import realAux as real
 import localSearch as ls
+
+def create_dir(path):
+	try:
+		os.mkdir(path)
+	except OSError:
+		print ("Creation of the directory %s failed" % path)
+	else:
+		print ("Successfully created the directory %s " % path)
+
+path1 = 'syntheticData'
+create_dir(path1)
+path1 = 'realData'
+create_dir(path1)
+path1 = 'realDataProcessed'
+create_dir(path1)
+path1 = 'syntheticDataCenters'
+create_dir(path1)
+path1 = 'Tests'
+create_dir(path1)
+path1 = 'visualizations/Final'
+create_dir(path1)
+path1 = 'outputs/NIPS'
+create_dir(path1)
 
 read_data = genfromtxt('realDataProcessed/skin.csv', delimiter=',')
 print("data loaded")

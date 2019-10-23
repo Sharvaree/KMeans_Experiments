@@ -2,7 +2,6 @@
 Tests on SKIN dataset
 '''
 
-
 from sklearn.cluster import KMeans
 from scipy.spatial import distance
 import numpy as np

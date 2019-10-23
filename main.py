@@ -28,7 +28,3 @@ import mainMeans
 import LO_MNIST
 import LO_NIPS
 import LO_SKIN
-
-LO_MNIST.main()
-LO_NIPS.main()
-LO_SKIN.main()
