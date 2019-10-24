@@ -27,7 +27,7 @@ from sklearn.decomposition import TruncatedSVD
 
 rng = np.random.RandomState(8)
 
-path = 'realDataProcessed/mnist_train.csv'
+path = 'realDataProcessed/kdd_processed.csv'
 data_with_labels = np.array(pd.read_csv(path))#, header=0, index_col=0))
 labels= data_with_labels[:, 0:1]
 data= np.delete(data_with_labels, 0, axis=1)
@@ -250,4 +250,4 @@ for num_cluster in num_clusters:
 
 print(statsK)
 
-real.writeRealStats("real_MNIST", statsK, num_clusters, betas)
+real.writeRealStats("real_kdd", statsK, num_clusters, betas)
