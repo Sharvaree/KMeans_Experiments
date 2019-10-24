@@ -1,5 +1,5 @@
 '''
-Tests on MNIST dataset
+Tests on kdd dataset
 '''
 import sys
 sys.path.insert(1, 'lib/')
@@ -28,14 +28,12 @@ from sklearn.decomposition import TruncatedSVD
 rng = np.random.RandomState(8)
 
 path = 'realDataProcessed/kdd_processed.csv'
-data_with_labels = np.array(pd.read_csv(path))#, header=0, index_col=0))
-labels= data_with_labels[:, 0:1]
-data= np.delete(data_with_labels, 0, axis=1)
-
-d = 40
+data = pd.read_csv(path, sep=" ", engine= 'python').values#, header=0, index_col=0))
+#data= np.delete(data_with_labels, 0, axis=1)
+d = 15
+rng = np.random.RandomState(8)
 svd = TruncatedSVD(n_components=d, n_iter=20, random_state=rng)
 data = svd.fit_transform(data)
-#######
 
 def create_dir(path):
 	try:
