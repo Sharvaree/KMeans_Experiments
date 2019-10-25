@@ -99,7 +99,7 @@ iterations=2
 runs=2
 
 #LS iterations
-lsit = 1
+lsit = 0
 #####
 statsK = []
 #####
