@@ -30,7 +30,7 @@ To run on real datasets, run
 
 > python3 LO_dataset.py
 
-where dataset is either NIPS, MNIST, KDD, or SKIN depending on the dataset one wants to run on.
+where dataset is either NIPS, MNIST or SKIN depending on the dataset one wants to run on.
 
 Note: Make sure you have the necessary python libraries intalled.
 
